@@ -15,6 +15,7 @@ async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
     while True:
         frame = next(frames)
         draw_frame(canvas, start_row, start_column, frame)
+        await asyncio.sleep(0)  # из-за того, что fps стал 20
         await asyncio.sleep(0)
         rows_direction, columns_direction, space_pressed = read_controls(canvas)
         draw_frame(canvas, start_row, start_column, frame, negative=True)
