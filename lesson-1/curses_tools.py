@@ -30,8 +30,6 @@ def draw_frame(canvas, start_row, start_column, text, negative=False):
                 continue
 
             symbol = symbol if not negative else ' '
-
-
             canvas.addch(row, column, symbol)
 
 
@@ -63,5 +61,26 @@ def read_controls(canvas):
         if pressed_key_code == SPACE_KEY_CODE:
             space_pressed = True
 
-
     return rows_direction, columns_direction, space_pressed
+
+
+def get_frame_size(text):
+    """Calculate size of multiline text fragment. Returns pair (rows number, colums number)"""
+
+    lines = text.splitlines()
+    rows = len(lines)
+    columns = max([len(line) for line in lines])
+
+    return rows, columns
+
+
+def if_frame_in_canvas(text, start_x, start_y, max_x, max_y):
+    rows, columns = get_frame_size(text)
+    if start_x <= 0 or start_y <= 0:
+        return False
+    if start_x + columns >= max_x:
+        return False
+    if start_y + rows >= max_y:
+        return False
+
+    return True
