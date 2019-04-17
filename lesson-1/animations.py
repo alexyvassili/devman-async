@@ -2,39 +2,7 @@ import asyncio
 import curses
 from itertools import cycle
 
-
-def draw_frame(canvas, start_row, start_column, text, negative=False):
-    """Draw multiline text fragment on canvas. Erase text instead of drawing if negative=True is specified."""
-
-    rows_number, columns_number = canvas.getmaxyx()
-
-    for row, line in enumerate(text.splitlines(), round(start_row)):
-        if row < 0:
-            continue
-
-        if row >= rows_number:
-            break
-
-        for column, symbol in enumerate(line, round(start_column)):
-            if column < 0:
-                continue
-
-            if column >= columns_number:
-                break
-
-            if symbol == ' ':
-                continue
-
-            # Check that current position it is not in a lower right corner of the window
-            # Curses will raise exception in that case. Don`t ask why…
-            # https://docs.python.org/3/library/curses.html#curses.window.addch
-            if row == rows_number - 1 and column == columns_number - 1:
-                continue
-
-            symbol = symbol if not negative else ' '
-
-
-            canvas.addch(row, column, symbol)
+from curses_tools import  draw_frame, read_controls
 
 
 async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
@@ -48,7 +16,10 @@ async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
         frame = next(frames)
         draw_frame(canvas, start_row, start_column, frame)
         await asyncio.sleep(0)
+        rows_direction, columns_direction, space_pressed = read_controls(canvas)
         draw_frame(canvas, start_row, start_column, frame, negative=True)
+        start_row += rows_direction
+        start_column += columns_direction
 
 
 async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0):

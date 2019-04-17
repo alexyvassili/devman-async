@@ -8,7 +8,7 @@ from itertools import cycle
 
 from animations import FRAME_ANIMATIONS, fire
 from starsky import get_sky_coroutines
-from settings import FPS, ANIMATIONS_FOLDER
+from settings import *
 
 
 def draw(canvas, stars_count=200, frame_animations=None):
@@ -23,6 +23,7 @@ def draw(canvas, stars_count=200, frame_animations=None):
 
     canvas.border()
     curses.curs_set(False)
+    canvas.nodelay(True)
     while True:
         for couroutine in couroutines:
             try:
