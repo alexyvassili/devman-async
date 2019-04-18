@@ -36,9 +36,9 @@ def draw(canvas, stars_count=200, frame_animations=None):
 
 def get_animation_frames_files(animation_name):
     frames_files = []
-    for file in os.listdir(os.path.join(ANIMATIONS_FOLDER, animation_name)):
-        if file.endswith(".txt"):
-            frames_files.append(os.path.join(ANIMATIONS_FOLDER, animation_name, file))
+    for filename in os.listdir(os.path.join(ANIMATIONS_FOLDER, animation_name)):
+        if filename.endswith(".txt"):
+            frames_files.append(os.path.join(ANIMATIONS_FOLDER, animation_name, filename))
     return sorted(frames_files)
 
 
