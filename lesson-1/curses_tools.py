@@ -1,4 +1,8 @@
-from settings import *
+SPACE_KEY_CODE = 32
+LEFT_KEY_CODE = 260
+RIGHT_KEY_CODE = 261
+UP_KEY_CODE = 259
+DOWN_KEY_CODE = 258
 
 
 def draw_frame(canvas, start_row, start_column, text, negative=False):
@@ -74,7 +78,7 @@ def get_frame_size(text):
     return rows, columns
 
 
-def if_frame_in_canvas(text, start_x, start_y, max_x, max_y):
+def is_frame_in_canvas(text, start_x, start_y, max_x, max_y):
     rows, columns = get_frame_size(text)
     if start_x <= 0 or start_y <= 0:
         return False

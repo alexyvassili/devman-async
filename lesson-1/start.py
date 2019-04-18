@@ -24,14 +24,12 @@ def draw(canvas, stars_count=200, frame_animations=None):
     canvas.border()
     curses.curs_set(False)
     canvas.nodelay(True)
-    while True:
+    while couroutines:
         for couroutine in couroutines:
             try:
                 couroutine.send(None)
             except StopIteration:
                 couroutines.remove(couroutine)
-        if len(couroutines) == 0:
-            break
         canvas.refresh()
         time.sleep(sleep_time)
 

@@ -2,7 +2,7 @@ import asyncio
 import curses
 from itertools import cycle
 
-from curses_tools import  draw_frame, read_controls, if_frame_in_canvas
+from curses_tools import  draw_frame, read_controls, is_frame_in_canvas
 
 
 async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
@@ -12,17 +12,17 @@ async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
     if start_column is None:
         start_column = max_x // 2
 
-    frames = cycle(frames)
-    while True:
-        frame = next(frames)
+    for frame in cycle(frames):
         draw_frame(canvas, start_row, start_column, frame)
         await asyncio.sleep(0)  # из-за того, что fps стал 20
         await asyncio.sleep(0)
         rows_direction, columns_direction, space_pressed = read_controls(canvas)
         draw_frame(canvas, start_row, start_column, frame, negative=True)
-        if if_frame_in_canvas(frame, start_column + columns_direction,
+        if is_frame_in_canvas(frame, start_column,
                               start_row + rows_direction, max_x, max_y):
             start_row += rows_direction
+        if is_frame_in_canvas(frame, start_column + columns_direction,
+                              start_row, max_x, max_y):
             start_column += columns_direction
 
 
@@ -57,5 +57,5 @@ async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0
 
 
 FRAME_ANIMATIONS = [
-    (animate_spaceship, {})
+    (animate_spaceship, {}),
 ]

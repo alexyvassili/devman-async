@@ -2,6 +2,7 @@ import curses
 import random
 import asyncio
 from itertools import cycle
+from collections import deque
 
 from settings import FPS
 
@@ -25,14 +26,12 @@ def get_random_stars_coords(max_x, max_y, stars_count):
 
 
 async def blink(canvas, row, column, symbol='*', start_from=0):
-    blink_animation = [(blink_value, int(delay*FPS)) for blink_value, delay in STAR_ANIMATION_PROFILE]
+    blink_animation = deque([(blink_value, int(delay*FPS)) for blink_value, delay in STAR_ANIMATION_PROFILE])
 
     if 0 < start_from < 4:
-        blink_animation = blink_animation[start_from:] + blink_animation[:start_from]
-    blink_cycle = cycle(blink_animation)
+        blink_animation.rotate(-start_from)
 
-    while True:
-        blink_value, delay_cadres = next(blink_cycle)
+    for blink_value, delay_cadres in cycle(blink_animation):
         canvas.addstr(row, column, symbol, blink_value)
         for _ in range(delay_cadres):
             await asyncio.sleep(0)
