@@ -1,4 +1,4 @@
-# lesson-1 "Star Rocket"
+# Lesson 1. "Star Rocket"
 A simple console game on python curses
 
  ![Game Screenshot](screenshot.png)
