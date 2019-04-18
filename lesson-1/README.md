@@ -1,6 +1,7 @@
 # lesson-1 "Star Rocket"
 A simple console game on python curses
 
+ ![Game Screenshot](screenshot.png)
 
 ## Requirements
 Python 3.6
