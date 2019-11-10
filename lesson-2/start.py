@@ -8,31 +8,43 @@ from itertools import cycle
 
 from animations import FRAME_ANIMATIONS, fire
 from starsky import get_sky_coroutines
-from space_garbage import fly_garbage, get_garbage_coroutines
+from space_garbage import garbage_coroutine_fabric
 from settings import *
+
+
+coroutines = []
+
+
+async def fill_orbit_with_garbage(canvas):
+    delay = 2
+    delay_cadres = delay * FPS
+    for coro in garbage_coroutine_fabric(canvas):
+        coroutines.append(coro)
+        for _ in range(delay_cadres):
+            await asyncio.sleep(0)
 
 
 def draw(canvas, stars_count=80, frame_animations=None):
     sleep_time = 1 / FPS
     max_y, max_x = canvas.getmaxyx()
-    couroutines = []
-    couroutines += get_sky_coroutines(canvas, max_x, max_y, stars_count)
-    couroutines.append(fire(canvas, max_y-2, max_x//2))
+    global coroutines
+    coroutines += get_sky_coroutines(canvas, max_x, max_y, stars_count)
+    coroutines.append(fire(canvas, max_y-2, max_x//2))
     if frame_animations:
         for animation, frames, kwargs in frame_animations:
-            couroutines.append(animation(canvas, frames, **kwargs))
+            coroutines.append(animation(canvas, frames, **kwargs))
 
-    couroutines += get_garbage_coroutines(canvas)
-
-    # canvas.border()
+    coroutines.append(fill_orbit_with_garbage(canvas))
     curses.curs_set(False)
     canvas.nodelay(True)
-    while couroutines:
-        for couroutine in couroutines:
+
+    while coroutines:
+        for coroutine in coroutines:
             try:
-                couroutine.send(None)
+                coroutine.send(None)
             except StopIteration:
-                couroutines.remove(couroutine)
+                coroutines.remove(coroutine)
+        canvas.border()
         canvas.refresh()
         time.sleep(sleep_time)
 
