@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 import time
-from settings import FPS
+from settings import FPS, START_YEAR
 
 
 PHRASES = {
@@ -36,8 +36,8 @@ def get_garbage_delay_tics(year):
 
 class GameState:
     def __init__(self):
-        self.year = 1957
-        self.phrase = PHRASES[self.year]
+        self.year = START_YEAR
+        self.phrase = PHRASES.get(self.year, "Let's go the game!")
         self.garbage_delay_ticks = get_garbage_delay_tics(self.year)
         self.change_ticks = int(FPS * 1.5)
         self.score = 0

@@ -75,6 +75,10 @@ def draw(canvas, stars_count=80):
                 coroutine.send(None)
             except StopIteration:
                 coroutines.remove(coroutine)
+                if coroutine in fires:
+                    fires.pop(coroutine)
+                if coroutine in obstacles:
+                    obstacles.pop(coroutine)
             else:
                 if coroutine in fires:
                     obstacle = collision(fires[coroutine], obstacles)
