@@ -34,3 +34,12 @@ def collision(fire, obstacles):
         if has_collision(obstacle_corner, obstacle.size(), fire_coords):
             return obstacle_coro
     return None
+
+
+def is_game_over(spaceship, obstacles):
+    spaceship_coords = spaceship.row, spaceship.column
+    for obstacle_coro, obstacle in obstacles.items():
+        obstacle_corner = obstacle.row, obstacle.column
+        if has_collision(obstacle_corner, obstacle.size(), spaceship_coords, spaceship.size()):
+            return obstacle_coro
+    return None

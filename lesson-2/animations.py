@@ -17,6 +17,15 @@ class SpaceShip:
         self.animation_name = 'animate_spaceship'
         self.frames = self.load_frames()
         self.current_frame = self.frames[0]
+        self._destroy = False
+        self.alive = True
+
+    def destroy(self):
+        self._destroy = True
+        self.alive = False
+
+    def size(self):
+        return get_frame_size(self.current_frame)
 
     def get_gun_coords(self):
         rows, columns = get_frame_size(self.current_frame)
@@ -58,6 +67,8 @@ class SpaceShip:
             # await asyncio.sleep(0)  # из-за того, что fps стал 20
             await asyncio.sleep(0)
             draw_frame(canvas, self.row, self.column, frame, negative=True)
+            if self._destroy:
+                return
             self._do_move()
 
 
