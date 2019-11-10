@@ -3,14 +3,14 @@ import asyncio
 import curses
 from itertools import cycle
 
-from curses_tools import  draw_frame, read_controls, is_frame_in_canvas, get_frame_size
+from curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
 from settings import ANIMATIONS_FOLDER
 
 
 class SpaceShip:
     def __init__(self, canvas):
         self.max_y, self.max_x = canvas.getmaxyx()
-        self.row = self.max_y // 2
+        self.row = self.max_y - 10
         self.row_delta = 0
         self.column = self.max_x // 2
         self.column_delta = 0
@@ -61,59 +61,42 @@ class SpaceShip:
             self._do_move()
 
 
+class Fire:
+    def __init__(self, canvas, start_row, start_column):
+        self.rows, self.columns = canvas.getmaxyx()
+        self.rows_speed = -0.5
+        self.columns_speed = 0
+        self.row = start_row
+        self.column = start_column
+        self._destroy = False
 
+    def destroy(self):
+        self._destroy = True
 
-async def animate_spaceship(canvas, frames, start_row=None, start_column=None):
-    max_y, max_x = canvas.getmaxyx()
-    if start_row is None:
-        start_row = max_y // 2
-    if start_column is None:
-        start_column = max_x // 2
+    def move(self):
+        self.row += self.rows_speed
+        self.column += self.columns_speed
 
-    for frame in cycle(frames):
-        draw_frame(canvas, start_row, start_column, frame)
-        # await asyncio.sleep(0)  # из-за того, что fps стал 20
+    async def fire(self, canvas):
+        """Display animation of gun shot. Direction and speed can be specified."""
+        canvas.addstr(round(self.row), round(self.column), '*')
         await asyncio.sleep(0)
-        rows_direction, columns_direction, space_pressed = read_controls(canvas)
-        draw_frame(canvas, start_row, start_column, frame, negative=True)
-        if is_frame_in_canvas(frame, start_column,
-                              start_row + rows_direction, max_x, max_y):
-            start_row += rows_direction
-        if is_frame_in_canvas(frame, start_column + columns_direction,
-                              start_row, max_x, max_y):
-            start_column += columns_direction
 
-
-async def fire(canvas, start_row, start_column, rows_speed=-0.5, columns_speed=0):
-    """Display animation of gun shot. Direction and speed can be specified."""
-
-    row, column = start_row, start_column
-
-    canvas.addstr(round(row), round(column), '*')
-    await asyncio.sleep(0)
-
-    canvas.addstr(round(row), round(column), 'O')
-    await asyncio.sleep(0)
-    canvas.addstr(round(row), round(column), ' ')
-
-    row += rows_speed
-    column += columns_speed
-
-    symbol = '-' if columns_speed else '|'
-
-    rows, columns = canvas.getmaxyx()
-    max_row, max_column = rows - 1, columns - 1
-
-    curses.beep()
-
-    while 0 < row < max_row and 0 < column < max_column:
-        canvas.addstr(round(row), round(column), symbol)
+        canvas.addstr(round(self.row), round(self.column), 'O')
         await asyncio.sleep(0)
-        canvas.addstr(round(row), round(column), ' ')
-        row += rows_speed
-        column += columns_speed
+        canvas.addstr(round(self.row), round(self.column), ' ')
 
+        self.move()
 
-FRAME_ANIMATIONS = [
-    (animate_spaceship, {}),
-]
+        symbol = '-' if self.columns_speed else '|'
+        max_row, max_column = self.rows - 1, self.columns - 1
+
+        curses.beep()
+
+        while 0 < self.row < max_row and 0 < self.column < max_column:
+            canvas.addstr(round(self.row), round(self.column), symbol)
+            await asyncio.sleep(0)
+            canvas.addstr(round(self.row), round(self.column), ' ')
+            if self._destroy:
+                return
+            self.move()
