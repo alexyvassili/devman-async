@@ -1,6 +1,11 @@
 from multiprocessing import Queue
-from pyalsaaudio import playwav
 import os
+import sys
+
+if sys.platform == 'linux':
+    from sounds.linux import playsound
+if sys.platform == 'win32':
+    from sounds.win32 import playsound
 
 
 class Sounds:
@@ -8,14 +13,6 @@ class Sounds:
     FIRE = os.path.join(FOLDER, 'smb_fireball.wav')
     BOOM = os.path.join(FOLDER, 'smb_vine.wav')
     GAMEOVER = os.path.join(FOLDER, 'smb_gameover.wav')
-
-
-def playsound(wav):
-    device = 'default'
-    f = playwav.wave.open(wav, 'rb')
-    device = playwav.alsaaudio.PCM(device=device)
-    playwav.play(device, f)
-    f.close()
 
 
 def play_queue(queue: Queue):
