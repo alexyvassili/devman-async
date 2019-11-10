@@ -43,7 +43,7 @@ async def game_object_action(canvas, game_object):
             fire_coro = fire.fire(canvas)
             coroutines.append(fire_coro)
             fires[fire_coro] = fire
-            add_sound(sound_queue, Sounds.FIRE, game_state)
+            add_sound(sound_queue, Sounds.FIRE, game_state.game_over)
         if game_state.game_over and escape_pressed:
             game_state.escape = True
         await asyncio.sleep(0)
@@ -96,9 +96,9 @@ def draw(canvas, stars_count=80):
                         obstacles.pop(obstacle)
                         game_state.score += rows * columns
                         game_state.shooted += 1
-                        add_sound(sound_queue, Sounds.BOOM, game_state)
+                        add_sound(sound_queue, Sounds.BOOM, game_state.game_over)
                 if spaceship.alive and is_game_over(spaceship, obstacles):
-                    add_sound(sound_queue, Sounds.GAMEOVER, game_state)
+                    add_sound(sound_queue, Sounds.GAMEOVER)
                     game_state.game_over = True
                     game_state.save_history()
                     spaceship.destroy()

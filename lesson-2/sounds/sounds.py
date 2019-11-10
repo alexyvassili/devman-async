@@ -26,6 +26,6 @@ def play_queue(queue: Queue):
         playsound(wav)
 
 
-def add_sound(queue: Queue, sound, game_state):
-    if not game_state.game_over and queue.qsize() < 2:
+def add_sound(queue: Queue, sound, game_over=False):
+    if not game_over and queue.qsize() < 2:
         queue.put(sound)
