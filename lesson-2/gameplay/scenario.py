@@ -44,6 +44,8 @@ class GameState:
         self.shooted = 0
         self.start_time = time.time()
         self.start_date = datetime.today().strftime("%d-%m-%Y %H:%M")
+        self.game_over = False
+        self.escape = False
 
     def switch_year(self):
         self.year += 1
