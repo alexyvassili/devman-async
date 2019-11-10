@@ -6,7 +6,8 @@ from animations import Fire, SpaceShip
 from starsky import get_sky_coroutines
 from space_garbage import garbage_fabric
 from curses_tools import read_controls
-from collisions import collision
+from collisions import collision, is_game_over
+from messages import show_game_over
 from settings import *
 
 
@@ -64,6 +65,9 @@ def draw(canvas, stars_count=80, frame_animations=None):
                         fires.pop(coroutine)
                         obstacles[obstacle].destroy()
                         obstacles.pop(obstacle)
+                if spaceship.alive and is_game_over(spaceship, obstacles):
+                    spaceship.destroy()
+                    coroutines.append(show_game_over(canvas))
         canvas.border()
         canvas.refresh()
         time.sleep(sleep_time)

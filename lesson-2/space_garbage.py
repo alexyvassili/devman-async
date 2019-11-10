@@ -54,10 +54,6 @@ def get_garbage_frames():
     return frames
 
 
-def get_garbage_coords(max_x):
-    return list(range(10, max_x - 10, 30))
-
-
 def garbage_fabric(canvas):
     garbage_frames = get_garbage_frames()
     max_y, max_x = canvas.getmaxyx()
