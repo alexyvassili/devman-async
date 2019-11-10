@@ -113,9 +113,11 @@ def draw(canvas, stars_count=80):
 
 
 if __name__ == '__main__':
-    player = Process(target=play_queue, args=(sound_queue,))
-    player.start()
+    if SOUNDS == "ON":
+        player = Process(target=play_queue, args=(sound_queue,))
+        player.start()
     curses.update_lines_cols()
     curses.wrapper(draw)
-    sound_queue.put(None)
-    player.join()
+    if SOUNDS == "ON":
+        sound_queue.put(None)
+        player.join()
