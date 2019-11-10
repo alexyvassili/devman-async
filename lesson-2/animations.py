@@ -4,6 +4,7 @@ import curses
 from itertools import cycle
 
 from curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
+from physics import update_speed
 from settings import ANIMATIONS_FOLDER
 
 
@@ -14,6 +15,8 @@ class SpaceShip:
         self.row_delta = 0
         self.column = self.max_x // 2
         self.column_delta = 0
+        self.row_speed = 0
+        self.column_speed = 0
         self.animation_name = 'animate_spaceship'
         self.frames = self.load_frames()
         self.current_frame = self.frames[0]
@@ -48,12 +51,16 @@ class SpaceShip:
         return frames
 
     def move(self, rows_direction, columns_direction):
+        self.row_speed, self.column_speed = update_speed(self.row_speed,
+                                                         self.column_speed,
+                                                         rows_direction,
+                                                         columns_direction)
         if is_frame_in_canvas(self.current_frame, self.column,
-                              self.row + rows_direction, self.max_x, self.max_y):
-            self.row_delta += rows_direction
-        if is_frame_in_canvas(self.current_frame, self.column + columns_direction,
+                              self.row + self.row_speed, self.max_x, self.max_y):
+            self.row_delta = self.row_speed
+        if is_frame_in_canvas(self.current_frame, self.column + self.column_speed,
                               self.row, self.max_x, self.max_y):
-            self.column_delta += columns_direction
+            self.column_delta = self.column_speed
 
     def _do_move(self):
         self.row, self.row_delta = self.row + self.row_delta, 0
