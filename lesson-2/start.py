@@ -3,8 +3,6 @@ import curses
 import asyncio
 from multiprocessing import Process, Queue
 
-from pyalsaaudio import playwav
-
 from objects.animations import Fire, SpaceShip
 from objects.starsky import get_sky_coroutines
 from objects.space_garbage import garbage_fabric
@@ -12,6 +10,7 @@ from physics.curses_tools import read_controls, draw_frame
 from physics.collisions import collision, is_game_over
 from gameplay.scenario import GameState
 from gameplay.messages import show_game_over
+from sounds.sounds import Sounds, add_sound, play_queue
 from settings import *
 
 
@@ -44,7 +43,7 @@ async def game_object_action(canvas, game_object):
             fire_coro = fire.fire(canvas)
             coroutines.append(fire_coro)
             fires[fire_coro] = fire
-            sound_queue.put('sounds/smb_fireball.wav')
+            add_sound(sound_queue, Sounds.FIRE, game_state)
         if game_state.game_over and escape_pressed:
             game_state.escape = True
         await asyncio.sleep(0)
@@ -59,22 +58,6 @@ async def draw_state(canvas):
         draw_frame(canvas, 2, 1, game_state.phrase)
         await asyncio.sleep(0)
         draw_frame(canvas, 0, 0, empty_text)
-
-
-def playsound(wav):
-    device = 'default'
-    f = playwav.wave.open(wav, 'rb')
-    device = playwav.alsaaudio.PCM(device=device)
-    playwav.play(device, f)
-    f.close()
-
-
-def play_queue(queue: Queue):
-    while True:
-        wav = queue.get()
-        if not wav:
-            break
-        playsound(wav)
 
 
 def draw(canvas, stars_count=80):
@@ -113,13 +96,13 @@ def draw(canvas, stars_count=80):
                         obstacles.pop(obstacle)
                         game_state.score += rows * columns
                         game_state.shooted += 1
-                        sound_queue.put('sounds/smb_vine.wav')
+                        add_sound(sound_queue, Sounds.BOOM, game_state)
                 if spaceship.alive and is_game_over(spaceship, obstacles):
+                    add_sound(sound_queue, Sounds.GAMEOVER, game_state)
                     game_state.game_over = True
                     game_state.save_history()
                     spaceship.destroy()
                     coroutines.append(show_game_over(canvas))
-                    sound_queue.put('sounds/smb_gameover.wav')
         state_coro.send(None)
         canvas.border()
         canvas.refresh()
