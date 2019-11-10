@@ -1,9 +1,11 @@
 import asyncio
 import os
 import random
-from explosion import explode
-from curses_tools import draw_frame, get_frame_size
-from settings import FRAMES_FOLDER, GARBAGE_SPEED
+from physics.explosion import explode
+from physics.curses_tools import draw_frame, get_frame_size
+from settings import GARBAGE_SPEED
+
+FRAMES_FOLDER = 'objects/frames'
 
 
 class Garbage:

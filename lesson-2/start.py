@@ -2,13 +2,13 @@ import time
 import curses
 import asyncio
 
-from animations import Fire, SpaceShip
-from starsky import get_sky_coroutines
-from space_garbage import garbage_fabric
-from curses_tools import read_controls, draw_frame
-from collisions import collision, is_game_over
-from game_scenario import GameState
-from messages import show_game_over
+from objects.animations import Fire, SpaceShip
+from objects.starsky import get_sky_coroutines
+from objects.space_garbage import garbage_fabric
+from physics.curses_tools import read_controls, draw_frame
+from physics.collisions import collision, is_game_over
+from gameplay.scenario import GameState
+from gameplay.messages import show_game_over
 from settings import *
 
 

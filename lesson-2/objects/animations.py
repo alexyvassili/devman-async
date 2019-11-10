@@ -3,9 +3,10 @@ import asyncio
 import curses
 from itertools import cycle
 
-from curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
-from physics import update_speed
-from settings import ANIMATIONS_FOLDER
+from physics.curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
+from physics.physics import update_speed
+
+FRAMES_FOLDER = "objects/frames"
 
 
 class SpaceShip:
@@ -17,7 +18,7 @@ class SpaceShip:
         self.column_delta = 0
         self.row_speed = 0
         self.column_speed = 0
-        self.animation_name = 'animate_spaceship'
+        self.animation_name = 'spaceship'
         self.frames = self.load_frames()
         self.current_frame = self.frames[0]
         self._destroy = False
@@ -36,9 +37,9 @@ class SpaceShip:
 
     def get_animation_frames_files(self):
         frames_files = []
-        for filename in os.listdir(os.path.join(ANIMATIONS_FOLDER, self.animation_name)):
+        for filename in os.listdir(os.path.join(FRAMES_FOLDER, self.animation_name)):
             if filename.endswith(".txt"):
-                frames_files.append(os.path.join(ANIMATIONS_FOLDER, self.animation_name, filename))
+                frames_files.append(os.path.join(FRAMES_FOLDER, self.animation_name, filename))
         return sorted(frames_files)
 
     def load_frames(self):

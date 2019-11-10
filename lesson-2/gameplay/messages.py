@@ -1,10 +1,10 @@
 import asyncio
-from curses_tools import draw_frame, get_frame_size
+from physics.curses_tools import draw_frame, get_frame_size
 
 
 async def show_game_over(canvas):
     max_y, max_x = canvas.getmaxyx()
-    filename = 'frames/game_over.txt'
+    filename = 'gameplay/frames/game_over.txt'
     with open(filename) as f:
         frame = f.read()
     rows, columns = get_frame_size(frame)
