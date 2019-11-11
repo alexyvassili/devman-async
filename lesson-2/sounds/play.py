@@ -20,7 +20,7 @@ class Sounds:
     BOOM = os.path.join(FOLDER, 'smb_vine.wav')
     GAMEOVER = os.path.join(FOLDER, 'smb_gameover.wav')
     PAUSE = os.path.join(FOLDER, 'smb_pause.wav')
-    BACKGROUND = os.path.join(FOLDER, 'POL-outer-space-short.wav')
+    BACKGROUND = os.path.join(FOLDER, 'limbo_soundtrack_4.wav')
 
 
 def play_loop(wav: str, event: Event) -> None:
