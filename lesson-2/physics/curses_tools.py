@@ -4,6 +4,7 @@ RIGHT_KEY_CODE = 261
 UP_KEY_CODE = 259
 DOWN_KEY_CODE = 258
 ESCAPE_KEY_CODE = 27
+PAUSE_KEY_CODE = 80
 
 
 def draw_frame(canvas, start_row, start_column, text, negative=False):
@@ -44,6 +45,7 @@ def read_controls(canvas):
     rows_direction = columns_direction = 0
     space_pressed = False
     escape_pressed = False
+    pause_pressed = False
 
     while True:
         pressed_key_code = canvas.getch()
@@ -70,7 +72,10 @@ def read_controls(canvas):
         if pressed_key_code == ESCAPE_KEY_CODE:
             escape_pressed = True
 
-    return rows_direction, columns_direction, space_pressed, escape_pressed
+        if pressed_key_code == PAUSE_KEY_CODE:
+            pause_pressed = True
+
+    return rows_direction, columns_direction, space_pressed, escape_pressed, pause_pressed
 
 
 def get_frame_size(text):

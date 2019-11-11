@@ -77,8 +77,14 @@ class Core:
                 await asyncio.sleep(0)
 
     async def spaceship_action(self, canvas, game_state):
+        pause_flag = False
         while True:
-            rows_direction, columns_direction, space_pressed, escape_pressed = read_controls(canvas)
+            rows_direction, columns_direction, space_pressed, escape_pressed, pause_pressed = read_controls(canvas)
+            if pause_pressed:
+                add_sound(self.sound_queue, Sounds.PAUSE, game_state.game_over)
+                pause_flag = not pause_flag
+            if pause_flag:
+                continue
             self.spaceship.move(rows_direction, columns_direction)
             if space_pressed and self.spaceship.alive and game_state.year >= GUN_YEAR:
                 fire = Fire(canvas, *self.spaceship.get_gun_coords())
