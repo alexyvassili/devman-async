@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+from typing import List, Iterable
 from physics.explosion import explode
 from physics.curses_tools import draw_frame, get_frame_size
 from settings import GARBAGE_SPEED
@@ -9,7 +10,7 @@ FRAMES_FOLDER = 'objects/frames'
 
 
 class Garbage:
-    def __init__(self, canvas, column, garbage_frame):
+    def __init__(self, canvas, column: int, garbage_frame: str):
         self.rows_number, self.columns_number = canvas.getmaxyx()
 
         self.column = max(column, 0)
@@ -19,13 +20,13 @@ class Garbage:
         self.speed=GARBAGE_SPEED
         self._destroy = False
 
-    def size(self):
+    def size(self) -> tuple:
         return get_frame_size(self.frame)
 
-    def destroy(self):
+    def destroy(self) -> None:
         self._destroy = True
 
-    async def fly(self, canvas):
+    async def fly(self, canvas) -> None:
         """Animate garbage, flying from top to bottom.
            Сolumn position will stay same, as specified on start.
         """
@@ -43,20 +44,20 @@ class Garbage:
             self.row += self.speed
 
 
-def create_gargabe(canvas, filename, position):
+def create_gargabe(canvas, filename: str, position: int) -> Garbage:
     with open(os.path.join(filename), "r") as garbage_file:
         frame = garbage_file.read()
     return Garbage(canvas, position, frame)
 
 
-def get_garbage_frames():
+def get_garbage_frames() -> List[str]:
     frames = []
     for filename in os.listdir(os.path.join(FRAMES_FOLDER, 'garbage')):
         frames.append(os.path.join(FRAMES_FOLDER, 'garbage', filename))
     return frames
 
 
-def garbage_fabric(canvas):
+def garbage_fabric(canvas) -> Iterable[Garbage]:
     garbage_frames = get_garbage_frames()
     max_y, max_x = canvas.getmaxyx()
     while True:

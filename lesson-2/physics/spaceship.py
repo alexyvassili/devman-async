@@ -1,7 +1,8 @@
 import math
+from typing import Tuple
 
 
-def _limit(value, min_value, max_value):
+def _limit(value: float, min_value: float, max_value: float) -> float:
     """Limit value by min_value and max_value."""
 
     if value < min_value:
@@ -11,7 +12,7 @@ def _limit(value, min_value, max_value):
     return value
 
 
-def _apply_acceleration(speed, speed_limit, forward=True):
+def _apply_acceleration(speed: float, speed_limit: float, forward=True) -> float:
     """Change speed — accelerate or brake — according to force direction."""
 
     speed_limit = abs(speed_limit)
@@ -36,19 +37,21 @@ def _apply_acceleration(speed, speed_limit, forward=True):
     return result_speed
 
 
-def update_speed(row_speed, column_speed, rows_direction, columns_direction, row_speed_limit=2, column_speed_limit=2,
-                 fading=0.8):
-    """Update speed smootly to make control handy for player. Return new speed value (row_speed, column_speed)
+def update_speed(row_speed: float, column_speed: float, rows_direction: int,
+                 columns_direction: int, row_speed_limit=2,
+                 column_speed_limit=2, fading=0.8) -> Tuple[float, float]:
+    """Update speed smootly to make control handy for player.
+        Return new speed value (row_speed, column_speed)
 
-    rows_direction — is a force direction by rows axis. Possible values:
-       -1 — if force pulls up
-       0  — if force has no effect
-       1  — if force pulls down
+        rows_direction — is a force direction by rows axis. Possible values:
+           -1 — if force pulls up
+           0  — if force has no effect
+           1  — if force pulls down
 
-    columns_direction — is a force direction by colums axis. Possible values:
-       -1 — if force pulls left
-       0  — if force has no effect
-       1  — if force pulls right
+        columns_direction — is a force direction by colums axis. Possible values:
+           -1 — if force pulls left
+           0  — if force has no effect
+           1  — if force pulls right
     """
 
     if rows_direction not in (-1, 0, 1):

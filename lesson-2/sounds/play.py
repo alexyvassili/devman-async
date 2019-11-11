@@ -1,4 +1,5 @@
 from multiprocessing import Queue, Event
+from typing import Callable
 import os
 import sys
 
@@ -17,12 +18,12 @@ class Sounds:
     BACKGROUND = os.path.join(FOLDER, 'POL-outer-space-short.wav')
 
 
-def play_loop(wav, event: Event):
+def play_loop(wav: str, event: Event) -> None:
     while not event.is_set():
         playsound(wav)
 
 
-def play_queue(queue: Queue):
+def play_queue(queue: Queue) -> None:
     while True:
         wav = queue.get()
         if not wav:
@@ -30,6 +31,6 @@ def play_queue(queue: Queue):
         playsound(wav)
 
 
-def add_sound(queue: Queue, sound, game_over=False):
+def add_sound(queue: Queue, sound: str, game_over=False) -> None:
     if not game_over and queue.qsize() < 2:
         queue.put(sound)

@@ -2,6 +2,7 @@ import os
 import asyncio
 import curses
 from itertools import cycle
+from typing import List
 
 from physics.curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
 from physics.spaceship import update_speed
@@ -24,25 +25,25 @@ class SpaceShip:
         self._destroy = False
         self.alive = True
 
-    def destroy(self):
+    def destroy(self) -> None:
         self._destroy = True
         self.alive = False
 
-    def size(self):
+    def size(self) -> tuple:
         return get_frame_size(self.current_frame)
 
-    def get_gun_coords(self):
+    def get_gun_coords(self) -> tuple:
         rows, columns = get_frame_size(self.current_frame)
         return self.row, self.column + columns // 2
 
-    def get_animation_frames_files(self):
+    def get_animation_frames_files(self) -> List[str]:
         frames_files = []
         for filename in os.listdir(os.path.join(FRAMES_FOLDER, self.animation_name)):
             if filename.endswith(".txt"):
                 frames_files.append(os.path.join(FRAMES_FOLDER, self.animation_name, filename))
         return sorted(frames_files)
 
-    def load_frames(self):
+    def load_frames(self) -> List[str]:
         frames = []
         frames_files = self.get_animation_frames_files()
         for filename in frames_files:
@@ -51,7 +52,7 @@ class SpaceShip:
                 frames.append(frame)
         return frames
 
-    def move(self, rows_direction, columns_direction):
+    def move(self, rows_direction: int, columns_direction: int) -> None:
         self.row_speed, self.column_speed = update_speed(self.row_speed,
                                                          self.column_speed,
                                                          rows_direction,
@@ -63,11 +64,11 @@ class SpaceShip:
                               self.row, self.max_x, self.max_y):
             self.column_delta = self.column_speed
 
-    def _do_move(self):
+    def _do_move(self) -> None:
         self.row, self.row_delta = self.row + self.row_delta, 0
         self.column, self.column_delta = self.column + self.column_delta, 0
 
-    async def animate(self, canvas):
+    async def animate(self, canvas) -> None:
         for frame in cycle(self.frames):
             self.current_frame = frame
             # draw_frame(canvas, self.row, self.column, frame, negative=True)
@@ -81,7 +82,7 @@ class SpaceShip:
 
 
 class Fire:
-    def __init__(self, canvas, start_row, start_column):
+    def __init__(self, canvas, start_row: int, start_column: int):
         self.rows, self.columns = canvas.getmaxyx()
         self.rows_speed = -0.5
         self.columns_speed = 0
@@ -89,14 +90,14 @@ class Fire:
         self.column = start_column
         self._destroy = False
 
-    def destroy(self):
+    def destroy(self) -> None:
         self._destroy = True
 
-    def move(self):
+    def move(self) -> None:
         self.row += self.rows_speed
         self.column += self.columns_speed
 
-    async def fire(self, canvas):
+    async def fire(self, canvas) -> None:
         """Display animation of gun shot. Direction and speed can be specified."""
         canvas.addstr(round(self.row), round(self.column), '*')
         await asyncio.sleep(0)

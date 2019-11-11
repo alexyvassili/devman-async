@@ -2,7 +2,7 @@ import asyncio
 from physics.curses_tools import draw_frame, get_frame_size
 
 
-async def show_game_over(canvas):
+async def show_game_over(canvas) -> None:
     max_y, max_x = canvas.getmaxyx()
     filename = 'gameplay/frames/game_over.txt'
     with open(filename) as f:

@@ -15,9 +15,8 @@ game_state = GameState()
 core = Core()
 
 
-async def draw_state(canvas):
+async def draw_state(canvas) -> None:
     rows, columns = canvas.getmaxyx()
-    empty_text = "\n".join([" " * columns for _ in range(rows)])
     while True:
         canvas.border()
         frame = f"Year: {game_state.year}\t\tScore: {game_state.score}\t\t" \
@@ -27,7 +26,7 @@ async def draw_state(canvas):
         draw_frame(canvas, 1, 1, frame, negative=True)
 
 
-def draw(canvas):
+def draw(canvas) -> None:
     sleep_time = 1 / FPS
     max_y, max_x = canvas.getmaxyx()
     core.load_coroutines(canvas, game_state)

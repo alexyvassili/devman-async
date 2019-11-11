@@ -1,4 +1,5 @@
 import asyncio
+from typing import List, Optional
 from datetime import datetime
 import time
 import re
@@ -18,7 +19,7 @@ PHRASES = {
 }
 
 
-def get_garbage_delay_tics(year):
+def get_garbage_delay_tics(year: int) -> Optional[int]:
     if year < 1961:
         return None
     elif year < 1969:
@@ -35,13 +36,13 @@ def get_garbage_delay_tics(year):
         return 2
 
 
-def load_history():
+def load_history() -> List[str]:
     with open('stat/history.txt') as f:
         history = list(f.readlines())
     return history
 
 
-def parse_history_records(history):
+def parse_history_records(history: List[str]) -> List[int]:
     records = []
     for item in history:
         record = re.search(r"Score:\s(\d+)", item)[1]
@@ -49,7 +50,7 @@ def parse_history_records(history):
     return records
 
 
-def load_record():
+def load_record() -> int:
     history = load_history()
     records = parse_history_records(history)
     return max(records)
@@ -69,20 +70,21 @@ class GameState:
         self.game_over = False
         self.escape = False
 
-    def switch_year(self):
+    def switch_year(self) -> None:
         self.year += 1
         if self.year in PHRASES:
             self.phrase = PHRASES[self.year]
         self.garbage_delay_ticks = get_garbage_delay_tics(self.year)
 
-    def save_history(self):
+    def save_history(self) -> None:
         playing_time = (time.time() - self.start_time) / 60
         playing_time = round(playing_time, 2)
-        stat_str = f"{self.start_date}\tScore: {self.score}\tShooted: {self.shooted}\tTime: {playing_time} min.\n"
+        stat_str = f"{self.start_date}\tScore: {self.score}" \
+            f"\tShooted: {self.shooted}\tTime: {playing_time} min.\n"
         with open("stat/history.txt", "a") as myfile:
             myfile.write(stat_str)
 
-    async def tick(self):
+    async def tick(self) -> None:
         while True:
             for i in range(self.change_ticks):
                 await asyncio.sleep(0)

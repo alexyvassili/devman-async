@@ -7,7 +7,7 @@ ESCAPE_KEY_CODE = 27
 PAUSE_KEY_CODE = 80
 
 
-def draw_frame(canvas, start_row, start_column, text, negative=False):
+def draw_frame(canvas, start_row: int, start_column: int, text: str, negative=False) -> None:
     """Draw multiline text fragment on canvas. Erase text instead of drawing if negative=True is specified."""
 
     rows_number, columns_number = canvas.getmaxyx()
@@ -39,8 +39,8 @@ def draw_frame(canvas, start_row, start_column, text, negative=False):
             canvas.addch(row, column, symbol)
 
 
-def read_controls(canvas):
-    """Read keys pressed and returns tuple witl controls state."""
+def read_controls(canvas) -> tuple:
+    """Read keys pressed and returns tuple with controls state."""
 
     rows_direction = columns_direction = 0
     space_pressed = False
@@ -79,7 +79,9 @@ def read_controls(canvas):
 
 
 def get_frame_size(text):
-    """Calculate size of multiline text fragment. Returns pair (rows number, colums number)"""
+    """Calculate size of multiline text fragment.
+        Returns pair (rows number, colums number)
+    """
 
     lines = text.splitlines()
     rows = len(lines)
@@ -88,7 +90,7 @@ def get_frame_size(text):
     return rows, columns
 
 
-def is_frame_in_canvas(text, start_x, start_y, max_x, max_y):
+def is_frame_in_canvas(text: str, start_x: int, start_y: int, max_x: int, max_y: int) -> bool:
     rows, columns = get_frame_size(text)
     if start_x <= 0 or start_y <= 0:
         return False

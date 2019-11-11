@@ -1,11 +1,13 @@
 import asyncio
 from multiprocessing import Queue
+from typing import Coroutine
 from objects.starsky import get_sky_coroutines
 from objects.animations import Fire, SpaceShip
 from objects.space_garbage import garbage_fabric
 from physics.collisions import collision, is_game_over
 from sounds.play import add_sound, Sounds
 from gameplay.messages import show_game_over
+from gameplay.scenario import GameState
 from physics.curses_tools import read_controls
 from settings import GUN_YEAR
 
@@ -18,7 +20,7 @@ class Core:
         self.fires = dict()
         self.spaceship = None
 
-    def load_coroutines(self, canvas, game_state):
+    def load_coroutines(self, canvas, game_state: GameState) -> None:
         self.coroutines += get_sky_coroutines(canvas)
         self.spaceship = SpaceShip(canvas)
         self.coroutines.append(self.spaceship.animate(canvas))
@@ -26,14 +28,15 @@ class Core:
         self.coroutines.append(self.fill_orbit_with_garbage(canvas, game_state))
         self.coroutines.append(game_state.tick())
 
-    def _remove_empty_coro(self, coroutine):
+    def _remove_empty_coro(self, coroutine: Coroutine) -> None:
         self.coroutines.remove(coroutine)
         if coroutine in self.fires:
             self.fires.pop(coroutine)
         if coroutine in self.obstacles:
             self.obstacles.pop(coroutine)
 
-    def _process_fire_collision(self, coroutine, game_state):
+    def _process_fire_collision(self, coroutine: Coroutine,
+                                game_state: GameState) -> None:
         obstacle = collision(self.fires[coroutine], self.obstacles)
         if obstacle:
             self.fires[coroutine].destroy()
@@ -45,14 +48,14 @@ class Core:
             game_state.shooted += 1
             add_sound(self.sound_queue, Sounds.BOOM, game_state.game_over)
 
-    def _game_over(self, canvas, game_state):
+    def _game_over(self, canvas, game_state: GameState) -> None:
         add_sound(self.sound_queue, Sounds.GAMEOVER)
         game_state.game_over = True
         game_state.save_history()
         self.spaceship.destroy()
         self.coroutines.append(show_game_over(canvas))
 
-    def flip_coroutines(self, canvas, game_state):
+    def flip_coroutines(self, canvas, game_state: GameState):
         for coroutine in self.coroutines:
             try:
                 coroutine.send(None)
@@ -61,10 +64,12 @@ class Core:
             else:
                 if coroutine in self.fires:
                     self._process_fire_collision(coroutine, game_state)
-                if self.spaceship.alive and is_game_over(self.spaceship, self.obstacles):
+                if self.spaceship.alive and is_game_over(self.spaceship,
+                                                         self.obstacles):
                     self._game_over(canvas, game_state)
 
-    async def fill_orbit_with_garbage(self, canvas, game_state):
+    async def fill_orbit_with_garbage(self, canvas,
+                                      game_state: GameState) -> None:
         while not game_state.garbage_delay_ticks:
             await asyncio.sleep(0)
 
@@ -76,17 +81,19 @@ class Core:
             for _ in range(delay_cadres):
                 await asyncio.sleep(0)
 
-    async def spaceship_action(self, canvas, game_state):
+    async def spaceship_action(self, canvas, game_state: GameState) -> None:
         pause_flag = False
         while True:
-            rows_direction, columns_direction, space_pressed, escape_pressed, pause_pressed = read_controls(canvas)
+            rows_direction, columns_direction, space_pressed, \
+            escape_pressed, pause_pressed = read_controls(canvas)
             if pause_pressed:
                 add_sound(self.sound_queue, Sounds.PAUSE, game_state.game_over)
                 pause_flag = not pause_flag
             if pause_flag:
                 continue
             self.spaceship.move(rows_direction, columns_direction)
-            if space_pressed and self.spaceship.alive and game_state.year >= GUN_YEAR:
+            if (space_pressed and self.spaceship.alive
+                    and game_state.year >= GUN_YEAR):
                 fire = Fire(canvas, *self.spaceship.get_gun_coords())
                 fire_coro = fire.fire(canvas)
                 self.coroutines.append(fire_coro)
