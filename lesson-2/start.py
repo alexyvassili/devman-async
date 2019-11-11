@@ -16,6 +16,7 @@ core = Core()
 
 
 async def draw_state(canvas) -> None:
+    """Draw game state subwindow"""
     rows, columns = canvas.getmaxyx()
     while True:
         canvas.border()
@@ -27,6 +28,7 @@ async def draw_state(canvas) -> None:
 
 
 def draw(canvas) -> None:
+    """Draw and update whole game canvas, process main async loop"""
     sleep_time = 1 / FPS
     max_y, max_x = canvas.getmaxyx()
     core.load_coroutines(canvas, game_state)

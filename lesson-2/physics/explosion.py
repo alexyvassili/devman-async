@@ -1,3 +1,7 @@
+"""
+    Garbage explosion
+"""
+
 import asyncio
 import curses
 from physics.curses_tools import draw_frame, get_frame_size

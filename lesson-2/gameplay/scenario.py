@@ -1,3 +1,12 @@
+"""
+    Description of game scenario.
+    Load and save history.
+    Game State Object:
+        - keep current year
+        - year ticking coroutine
+        - keep game over state
+"""
+
 import asyncio
 from typing import List, Optional
 from datetime import datetime
@@ -51,9 +60,10 @@ def parse_history_records(history: List[str]) -> List[int]:
 
 
 def load_record() -> int:
+    """Load must cool score result from history"""
     history = load_history()
     records = parse_history_records(history)
-    return max(records)
+    return max(records) if records else 0
 
 
 class GameState:
@@ -67,10 +77,11 @@ class GameState:
         self.shooted = 0
         self.start_time = time.time()
         self.start_date = datetime.today().strftime("%d-%m-%Y %H:%M")
-        self.game_over = False
-        self.escape = False
+        self.game_over = False  # Is game over flag
+        self.escape = False  # If user can exit by key flag
 
     def switch_year(self) -> None:
+        """Switch year in game state"""
         self.year += 1
         if self.year in PHRASES:
             self.phrase = PHRASES[self.year]
@@ -85,6 +96,7 @@ class GameState:
             myfile.write(stat_str)
 
     async def tick(self) -> None:
+        """Years ticking by FPS"""
         while True:
             for i in range(self.change_ticks):
                 await asyncio.sleep(0)

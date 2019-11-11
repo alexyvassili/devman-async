@@ -1,3 +1,7 @@
+"""
+    Collisions module. Manage objects collisions.
+"""
+
 from typing import Dict, Coroutine, Optional
 from objects.animations import Fire, SpaceShip
 from objects.space_garbage import Garbage
@@ -36,6 +40,7 @@ def has_collision(obstacle_corner: tuple, obstacle_size: tuple,
 
 
 def collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
+    """Find collisions garbage and spaceship fire"""
     fire_coords = fire.row, fire.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column
@@ -45,6 +50,7 @@ def collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Corou
 
 
 def is_game_over(spaceship: SpaceShip, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
+    """Game Over when we have collision of spaceship and garbage"""
     spaceship_coords = spaceship.row, spaceship.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column

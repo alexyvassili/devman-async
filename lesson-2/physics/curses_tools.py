@@ -1,3 +1,7 @@
+"""
+    Curses tools and control key codes
+"""
+
 SPACE_KEY_CODE = 32
 LEFT_KEY_CODE = 260
 RIGHT_KEY_CODE = 261
@@ -8,7 +12,9 @@ PAUSE_KEY_CODE = 80
 
 
 def draw_frame(canvas, start_row: int, start_column: int, text: str, negative=False) -> None:
-    """Draw multiline text fragment on canvas. Erase text instead of drawing if negative=True is specified."""
+    """Draw multiline text fragment on canvas.
+       Erase text instead of drawing if negative=True is specified.
+    """
 
     rows_number, columns_number = canvas.getmaxyx()
 

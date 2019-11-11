@@ -1,5 +1,10 @@
+"""
+    Play game sounds: actions and background.
+    Linux: need pyalsaaudio pip package and libasound2-dev deb package
+    Windows: using python embedded winsound
+"""
+
 from multiprocessing import Queue, Event
-from typing import Callable
 import os
 import sys
 
@@ -19,11 +24,13 @@ class Sounds:
 
 
 def play_loop(wav: str, event: Event) -> None:
+    """Play wav file forever"""
     while not event.is_set():
         playsound(wav)
 
 
 def play_queue(queue: Queue) -> None:
+    """play sounds from queue"""
     while True:
         wav = queue.get()
         if not wav:
@@ -32,5 +39,6 @@ def play_queue(queue: Queue) -> None:
 
 
 def add_sound(queue: Queue, sound: str, game_over=False) -> None:
+    """Manage game sounds queue"""
     if not game_over and queue.qsize() < 2:
         queue.put(sound)

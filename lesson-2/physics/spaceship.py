@@ -1,3 +1,7 @@
+"""
+    Manage spaceship moves by physics
+"""
+
 import math
 from typing import Tuple
 

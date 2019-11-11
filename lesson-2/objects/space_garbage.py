@@ -1,3 +1,7 @@
+"""
+    Garbage objects and garbage fabric
+"""
+
 import asyncio
 import os
 import random
@@ -12,7 +16,6 @@ FRAMES_FOLDER = 'objects/frames'
 class Garbage:
     def __init__(self, canvas, column: int, garbage_frame: str):
         self.rows_number, self.columns_number = canvas.getmaxyx()
-
         self.column = max(column, 0)
         self.column = min(column, self.columns_number - 1)
         self.row = 0

@@ -1,3 +1,14 @@
+"""
+Core Game object:
+    - manage game coroutines
+    - process async loop
+    - keep sound queue
+    - remove empty coroutines
+    - read control keys
+    - fill orbit with garbage
+    - manage game over
+"""
+
 import asyncio
 from multiprocessing import Queue
 from typing import Coroutine
@@ -14,13 +25,19 @@ from settings import GUN_YEAR
 
 class Core:
     def __init__(self):
-        self.coroutines = []
-        self.sound_queue = Queue()
-        self.obstacles = dict()
-        self.fires = dict()
-        self.spaceship = None
+        self.coroutines = []  # list of game coroutines, main async loop
+        self.sound_queue = Queue()  # queue of game sounds
+        self.obstacles = dict()  # Dict[coroutine, Garbage] of garbages
+        self.fires = dict()  # Dict[coroutine, Fire] of spaceship shots coros
+        self.spaceship = None  # Spaceship object
 
     def load_coroutines(self, canvas, game_state: GameState) -> None:
+        """Load All coroutines to async loop
+            - sky coroutines
+            - spaceship coroutines
+            - garbage fabric coroutine
+            - game state ticking years coroutine
+        """
         self.coroutines += get_sky_coroutines(canvas)
         self.spaceship = SpaceShip(canvas)
         self.coroutines.append(self.spaceship.animate(canvas))
@@ -29,6 +46,9 @@ class Core:
         self.coroutines.append(game_state.tick())
 
     def _remove_empty_coro(self, coroutine: Coroutine) -> None:
+        """If coroutine is empty, remove it from main loop,
+            fires and obstacles
+        """
         self.coroutines.remove(coroutine)
         if coroutine in self.fires:
             self.fires.pop(coroutine)
@@ -37,6 +57,9 @@ class Core:
 
     def _process_fire_collision(self, coroutine: Coroutine,
                                 game_state: GameState) -> None:
+        """Fire collision: if fire meet garbage - garbage destroy
+            And player get scores equal garbage square
+        """
         obstacle = collision(self.fires[coroutine], self.obstacles)
         if obstacle:
             self.fires[coroutine].destroy()
@@ -49,6 +72,7 @@ class Core:
             add_sound(self.sound_queue, Sounds.BOOM, game_state.game_over)
 
     def _game_over(self, canvas, game_state: GameState) -> None:
+        """Game over actions"""
         add_sound(self.sound_queue, Sounds.GAMEOVER)
         game_state.game_over = True
         game_state.save_history()
@@ -56,6 +80,7 @@ class Core:
         self.coroutines.append(show_game_over(canvas))
 
     def flip_coroutines(self, canvas, game_state: GameState):
+        """Main async loop process - sending None to all coroutines"""
         for coroutine in self.coroutines:
             try:
                 coroutine.send(None)
@@ -70,6 +95,7 @@ class Core:
 
     async def fill_orbit_with_garbage(self, canvas,
                                       game_state: GameState) -> None:
+        """Filling orbit with garbage"""
         while not game_state.garbage_delay_ticks:
             await asyncio.sleep(0)
 
@@ -82,6 +108,11 @@ class Core:
                 await asyncio.sleep(0)
 
     async def spaceship_action(self, canvas, game_state: GameState) -> None:
+        """Read controls and manage gameplay:
+            - spaceship moves and shooting
+            - pause and exit
+            - player can exit only if Game Over
+        """
         pause_flag = False
         while True:
             rows_direction, columns_direction, space_pressed, \
