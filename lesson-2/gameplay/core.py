@@ -4,7 +4,7 @@ from objects.starsky import get_sky_coroutines
 from objects.animations import Fire, SpaceShip
 from objects.space_garbage import garbage_fabric
 from physics.collisions import collision, is_game_over
-from sounds.sounds import add_sound, Sounds
+from sounds.play import add_sound, Sounds
 from gameplay.messages import show_game_over
 from physics.curses_tools import read_controls
 from settings import GUN_YEAR

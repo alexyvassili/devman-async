@@ -4,7 +4,7 @@ import curses
 from itertools import cycle
 
 from physics.curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
-from physics.physics import update_speed
+from physics.spaceship import update_speed
 
 FRAMES_FOLDER = "objects/frames"
 

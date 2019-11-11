@@ -7,7 +7,7 @@ from multiprocessing import Process, Event
 from physics.curses_tools import draw_frame
 from gameplay.scenario import GameState
 from gameplay.core import Core
-from sounds.sounds import play_queue, play_loop, Sounds
+from sounds.play import play_queue, play_loop, Sounds
 from settings import *
 
 
