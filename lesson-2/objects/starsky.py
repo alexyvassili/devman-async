@@ -37,7 +37,8 @@ async def blink(canvas, row, column, symbol='*', start_from=0):
             await asyncio.sleep(0)
 
 
-def get_sky_coroutines(canvas, max_x, max_y, stars_count):
+def get_sky_coroutines(canvas, stars_count=80):
+    max_y, max_x = canvas.getmaxyx()
     stars_coords = get_random_stars_coords(max_x, max_y, stars_count)
     couroutines = [blink(canvas, row, column,
                          symbol=random.choice(STAR_SYMBOLS),
