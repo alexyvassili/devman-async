@@ -1,4 +1,4 @@
-from multiprocessing import Queue
+from multiprocessing import Queue, Event
 import os
 import sys
 
@@ -13,6 +13,13 @@ class Sounds:
     FIRE = os.path.join(FOLDER, 'smb_fireball.wav')
     BOOM = os.path.join(FOLDER, 'smb_vine.wav')
     GAMEOVER = os.path.join(FOLDER, 'smb_gameover.wav')
+    PAUSE = os.path.join(FOLDER, 'smb_pause.wav')
+    BACKGROUND = os.path.join(FOLDER, 'POL-outer-space-short.wav')
+
+
+def play_loop(wav, event: Event):
+    while not event.is_set():
+        playsound(wav)
 
 
 def play_queue(queue: Queue):

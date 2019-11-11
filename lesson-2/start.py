@@ -1,11 +1,13 @@
 import time
 import curses
 import asyncio
-from multiprocessing import Process
+import os
+import signal
+from multiprocessing import Process, Event
 from physics.curses_tools import draw_frame
 from gameplay.scenario import GameState
 from gameplay.core import Core
-from sounds.sounds import play_queue
+from sounds.sounds import play_queue, play_loop, Sounds
 from settings import *
 
 
@@ -18,7 +20,7 @@ async def draw_state(canvas):
     empty_text = "\n".join([" " * columns for _ in range(rows)])
     while True:
         canvas.border()
-        draw_frame(canvas, 1, 1, f"Year: {game_state.year}\t\tScore: {game_state.score}")
+        draw_frame(canvas, 1, 1, f"Year: {game_state.year}\t\tScore: {game_state.score}\t\tRecord: {game_state.record}")
         draw_frame(canvas, 2, 1, game_state.phrase)
         await asyncio.sleep(0)
         draw_frame(canvas, 0, 0, empty_text)
@@ -47,8 +49,15 @@ if __name__ == '__main__':
     if SOUNDS == "ON":
         player = Process(target=play_queue, args=(core.sound_queue,))
         player.start()
+    if BACKGROUND_SOUND == "ON":
+        backround_event = Event()
+        backround = Process(target=play_loop, args=(Sounds.BACKGROUND, backround_event))
+        backround.start()
     curses.update_lines_cols()
     curses.wrapper(draw)
     if SOUNDS == "ON":
         core.sound_queue.put(None)
         player.join()
+    if BACKGROUND_SOUND == "ON":
+        os.kill(backround.pid, signal.SIGTERM)
+        backround.join()

@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime
 import time
+import re
 from settings import FPS, START_YEAR
 
 
@@ -34,6 +35,26 @@ def get_garbage_delay_tics(year):
         return 2
 
 
+def load_history():
+    with open('stat/history.txt') as f:
+        history = list(f.readlines())
+    return history
+
+
+def parse_history_records(history):
+    records = []
+    for item in history:
+        record = re.search(r"Score:\s(\d+)", item)[1]
+        records.append(int(record))
+    return records
+
+
+def load_record():
+    history = load_history()
+    records = parse_history_records(history)
+    return max(records)
+
+
 class GameState:
     def __init__(self):
         self.year = START_YEAR
@@ -41,6 +62,7 @@ class GameState:
         self.garbage_delay_ticks = get_garbage_delay_tics(self.year)
         self.change_ticks = int(FPS * 1.5)
         self.score = 0
+        self.record = load_record()
         self.shooted = 0
         self.start_time = time.time()
         self.start_date = datetime.today().strftime("%d-%m-%Y %H:%M")
