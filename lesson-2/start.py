@@ -20,10 +20,11 @@ async def draw_state(canvas):
     empty_text = "\n".join([" " * columns for _ in range(rows)])
     while True:
         canvas.border()
-        draw_frame(canvas, 1, 1, f"Year: {game_state.year}\t\tScore: {game_state.score}\t\tRecord: {game_state.record}")
-        draw_frame(canvas, 2, 1, game_state.phrase)
+        frame = f"Year: {game_state.year}\t\tScore: {game_state.score}\t\t" \
+            f"Record: {game_state.record}\n{game_state.phrase}"
+        draw_frame(canvas, 1, 1, frame)
         await asyncio.sleep(0)
-        draw_frame(canvas, 0, 0, empty_text)
+        draw_frame(canvas, 1, 1, frame, negative=True)
 
 
 def draw(canvas):
