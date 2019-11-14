@@ -22,7 +22,7 @@ STAR_ANIMATION_PROFILE = [(curses.A_DIM, 2),
 
 def get_random_stars_coords(max_x: int, max_y: int,
                             stars_count: int) -> List[Tuple[int, int]]:
-    """Collisions will not check"""
+    """Collisions will not check."""
     stars_coords = []
     for i in range(stars_count):
         x = random.randint(1, max_x-2)
@@ -33,7 +33,7 @@ def get_random_stars_coords(max_x: int, max_y: int,
 
 async def blink(canvas, row: int, column: int, symbol='*',
                 start_from=0) -> None:
-    """Star animation coroutine"""
+    """Star animation coroutine."""
     blink_animation = deque([(blink_value, int(delay*FPS))
                              for blink_value, delay in STAR_ANIMATION_PROFILE])
     if 0 < start_from < 4:

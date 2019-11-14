@@ -1,5 +1,6 @@
 """
 Core Game object:
+
     - manage game coroutines
     - process async loop
     - keep sound queue
@@ -32,7 +33,8 @@ class Core:
         self.spaceship = None  # Spaceship object
 
     def load_coroutines(self, canvas, game_state: GameState) -> None:
-        """Load All coroutines to async loop
+        """Load All coroutines to async loop:
+
             - sky coroutines
             - spaceship coroutines
             - garbage fabric coroutine
@@ -46,9 +48,7 @@ class Core:
         self.coroutines.append(game_state.tick())
 
     def _remove_empty_coro(self, coroutine: Coroutine) -> None:
-        """If coroutine is empty, remove it from main loop,
-            fires and obstacles
-        """
+        """If coroutine is empty, remove it from main loop, fires and obstacles"""
         self.coroutines.remove(coroutine)
         if coroutine in self.fires:
             self.fires.pop(coroutine)
@@ -57,7 +57,8 @@ class Core:
 
     def _process_fire_collision(self, coroutine: Coroutine,
                                 game_state: GameState) -> None:
-        """Fire collision: if fire meet garbage - garbage destroy
+        """Fire collision: if fire meet garbage - garbage destroy.
+
             And player get scores equal garbage square
         """
         obstacle = collision(self.fires[coroutine], self.obstacles)
@@ -80,7 +81,7 @@ class Core:
         self.coroutines.append(show_game_over(canvas))
 
     def flip_coroutines(self, canvas, game_state: GameState):
-        """Main async loop process - sending None to all coroutines"""
+        """Main async loop process - sending None to all coroutines."""
         for coroutine in self.coroutines:
             try:
                 coroutine.send(None)
@@ -95,7 +96,7 @@ class Core:
 
     async def fill_orbit_with_garbage(self, canvas,
                                       game_state: GameState) -> None:
-        """Filling orbit with garbage"""
+        """Filling orbit with garbage."""
         while not game_state.garbage_delay_ticks:
             await asyncio.sleep(0)
 
@@ -109,6 +110,7 @@ class Core:
 
     async def spaceship_action(self, canvas, game_state: GameState) -> None:
         """Read controls and manage gameplay:
+
             - spaceship moves and shooting
             - pause and exit
             - player can exit only if Game Over

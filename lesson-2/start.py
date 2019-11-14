@@ -8,7 +8,7 @@ from physics.curses_tools import draw_frame
 from gameplay.scenario import GameState
 from gameplay.core import Core
 from sounds.play import play_queue, play_loop, Sounds
-from settings import *
+from settings import SOUNDS, BACKGROUND_SOUND, FPS
 
 
 game_state = GameState()
@@ -16,7 +16,7 @@ core = Core()
 
 
 async def draw_state(canvas) -> None:
-    """Draw game state subwindow"""
+    """Draw game state subwindow."""
     rows, columns = canvas.getmaxyx()
     while True:
         canvas.border()
@@ -28,7 +28,7 @@ async def draw_state(canvas) -> None:
 
 
 def draw(canvas) -> None:
-    """Draw and update whole game canvas, process main async loop"""
+    """Draw and update whole game canvas, process main async loop."""
     sleep_time = 1 / FPS
     max_y, max_x = canvas.getmaxyx()
     core.load_coroutines(canvas, game_state)
@@ -48,18 +48,18 @@ def draw(canvas) -> None:
 
 
 if __name__ == '__main__':
-    if SOUNDS == "ON":
+    if SOUNDS:
         player = Process(target=play_queue, args=(core.sound_queue,))
         player.start()
-    if BACKGROUND_SOUND == "ON":
-        backround_event = Event()
-        backround = Process(target=play_loop, args=(Sounds.BACKGROUND, backround_event))
-        backround.start()
+    if BACKGROUND_SOUND:
+        background_event = Event()
+        background = Process(target=play_loop, args=(Sounds.BACKGROUND, background_event))
+        background.start()
     curses.update_lines_cols()
     curses.wrapper(draw)
-    if SOUNDS == "ON":
+    if SOUNDS:
         core.sound_queue.put(None)
         player.join()
-    if BACKGROUND_SOUND == "ON":
-        os.kill(backround.pid, signal.SIGTERM)
-        backround.join()
+    if BACKGROUND_SOUND:
+        os.kill(background.pid, signal.SIGTERM)
+        background.join()

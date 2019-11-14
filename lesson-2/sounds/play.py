@@ -24,13 +24,13 @@ class Sounds:
 
 
 def play_loop(wav: str, event: Event) -> None:
-    """Play wav file forever"""
+    """Play wav file forever."""
     while not event.is_set():
         playsound(wav)
 
 
 def play_queue(queue: Queue) -> None:
-    """play sounds from queue"""
+    """Play sounds from queue."""
     while True:
         wav = queue.get()
         if not wav:
@@ -39,6 +39,6 @@ def play_queue(queue: Queue) -> None:
 
 
 def add_sound(queue: Queue, sound: str, game_over=False) -> None:
-    """Manage game sounds queue"""
+    """Manage game sounds queue."""
     if not game_over and queue.qsize() < 2:
         queue.put(sound)

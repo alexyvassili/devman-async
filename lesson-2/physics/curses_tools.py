@@ -13,6 +13,7 @@ PAUSE_KEY_CODE = 80
 
 def draw_frame(canvas, start_row: int, start_column: int, text: str, negative=False) -> None:
     """Draw multiline text fragment on canvas.
+
        Erase text instead of drawing if negative=True is specified.
     """
 
@@ -86,6 +87,7 @@ def read_controls(canvas) -> tuple:
 
 def get_frame_size(text):
     """Calculate size of multiline text fragment.
+
         Returns pair (rows number, colums number)
     """
 

@@ -37,7 +37,7 @@ class SpaceShip:
         return get_frame_size(self.current_frame)
 
     def get_gun_coords(self) -> tuple:
-        """Get spaceship gun coords (up center)"""
+        """Get spaceship gun coords (up center)."""
         rows, columns = get_frame_size(self.current_frame)
         return self.row, self.column + columns // 2
 
@@ -49,7 +49,7 @@ class SpaceShip:
         return sorted(frames_files)
 
     def load_frames(self) -> List[str]:
-        """Load animations frames"""
+        """Load animations frames."""
         frames = []
         frames_files = self.get_animation_frames_files()
         for filename in frames_files:
@@ -60,6 +60,7 @@ class SpaceShip:
 
     def move(self, rows_direction: int, columns_direction: int) -> None:
         """Move Spaceship by phisycs:
+
             - actions coro get directions by keyboard
             - move() get current speed
             - if spaceship can move, update delta_fields
@@ -81,7 +82,7 @@ class SpaceShip:
         self.column, self.column_delta = self.column + self.column_delta, 0
 
     async def animate(self, canvas) -> None:
-        """Spaceship animation"""
+        """Spaceship animation."""
         for frame in cycle(self.frames):
             self.current_frame = frame
             # draw_frame(canvas, self.row, self.column, frame, negative=True)

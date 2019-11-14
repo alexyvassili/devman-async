@@ -18,7 +18,10 @@ def _is_point_inside(corner_row: int, corner_column: int,
 
 def has_collision(obstacle_corner: tuple, obstacle_size: tuple,
                   obj_corner: tuple, obj_size=(1, 1)) -> bool:
-    """Determine if collision has occured. Return True or False."""
+    """Determine if collision has occured.
+
+       Returns True or False.
+    """
 
     opposite_obstacle_corner = (
         obstacle_corner[0] + obstacle_size[0] - 1,
@@ -40,7 +43,7 @@ def has_collision(obstacle_corner: tuple, obstacle_size: tuple,
 
 
 def collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
-    """Find collisions garbage and spaceship fire"""
+    """Find collisions garbage and spaceship fire."""
     fire_coords = fire.row, fire.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column
@@ -50,7 +53,7 @@ def collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Corou
 
 
 def is_game_over(spaceship: SpaceShip, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
-    """Game Over when we have collision of spaceship and garbage"""
+    """Game Over when we have collision of spaceship and garbage."""
     spaceship_coords = spaceship.row, spaceship.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column

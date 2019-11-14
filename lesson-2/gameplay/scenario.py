@@ -1,5 +1,6 @@
 """
     Description of game scenario.
+
     Load and save history.
     Game State Object:
         - keep current year
@@ -81,7 +82,7 @@ class GameState:
         self.escape = False  # If user can exit by key flag
 
     def switch_year(self) -> None:
-        """Switch year in game state"""
+        """Switch year in game state."""
         self.year += 1
         if self.year in PHRASES:
             self.phrase = PHRASES[self.year]
@@ -96,7 +97,7 @@ class GameState:
             myfile.write(stat_str)
 
     async def tick(self) -> None:
-        """Years ticking by FPS"""
+        """Years ticking by FPS."""
         while True:
             for i in range(self.change_ticks):
                 await asyncio.sleep(0)

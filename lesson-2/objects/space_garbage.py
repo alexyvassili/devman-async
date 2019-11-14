@@ -31,6 +31,7 @@ class Garbage:
 
     async def fly(self, canvas) -> None:
         """Animate garbage, flying from top to bottom.
+
            Сolumn position will stay same, as specified on start.
         """
         while self.row < self.rows_number:
