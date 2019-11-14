@@ -42,7 +42,7 @@ def has_collision(obstacle_corner: tuple, obstacle_size: tuple,
 ])
 
 
-def collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
+def find_collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
     """Find collisions garbage and spaceship fire."""
     fire_coords = fire.row, fire.column
     for obstacle_coro, obstacle in obstacles.items():

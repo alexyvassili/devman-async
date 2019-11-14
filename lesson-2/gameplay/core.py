@@ -16,7 +16,7 @@ from typing import Coroutine
 from objects.starsky import get_sky_coroutines
 from objects.animations import Fire, SpaceShip
 from objects.space_garbage import garbage_fabric
-from physics.collisions import collision, is_game_over
+from physics.collisions import find_collision, is_game_over
 from sounds.play import add_sound, Sounds
 from gameplay.messages import show_game_over
 from gameplay.scenario import GameState
@@ -61,7 +61,7 @@ class Core:
 
             And player get scores equal garbage square
         """
-        obstacle = collision(self.fires[coroutine], self.obstacles)
+        obstacle = find_collision(self.fires[coroutine], self.obstacles)
         if obstacle:
             self.fires[coroutine].destroy()
             self.fires.pop(coroutine)
