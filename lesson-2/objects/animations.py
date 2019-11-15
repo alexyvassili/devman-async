@@ -26,10 +26,10 @@ class SpaceShip:
         self.animation_name = 'spaceship'
         self.frames = self.load_frames()
         self.current_frame = self.frames[0]
-        self._destroyed = False
+        self.destroyed = False
 
-    def destroyed(self) -> None:
-        self._destroyed = True
+    def destroy(self) -> None:
+        self.destroyed = True
 
     def size(self) -> tuple:
         return get_frame_size(self.current_frame)
@@ -86,7 +86,7 @@ class SpaceShip:
             draw_frame(canvas, self.row, self.column, frame)
             await asyncio.sleep(0)
             draw_frame(canvas, self.row, self.column, frame, negative=True)
-            if self._destroyed:
+            if self.destroyed:
                 return
             self._do_move()
 
@@ -98,16 +98,16 @@ class Fire:
         self.columns_speed = 0
         self.row = start_row
         self.column = start_column
-        self._destroyed = False
+        self.destroyed = False
 
-    def destroyed(self) -> None:
-        self._destroyed = True
+    def destroy(self) -> None:
+        self.destroyed = True
 
     def move(self) -> None:
         self.row += self.rows_speed
         self.column += self.columns_speed
 
-    async def aminate(self, canvas) -> None:
+    async def animate(self, canvas) -> None:
         """Display animation of gun shot. Direction and speed can be specified."""
         canvas.addstr(round(self.row), round(self.column), '*')
         await asyncio.sleep(0)
@@ -127,6 +127,6 @@ class Fire:
             canvas.addstr(round(self.row), round(self.column), symbol)
             await asyncio.sleep(0)
             canvas.addstr(round(self.row), round(self.column), ' ')
-            if self._destroyed:
+            if self.destroyed:
                 return
             self.move()

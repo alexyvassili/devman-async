@@ -64,10 +64,10 @@ class Core:
         obstacle = find_collision(self.fires[coroutine], self.obstacles)
         if not obstacle:
             return
-        self.fires[coroutine].destroyed()
+        self.fires[coroutine].destroy()
         self.fires.pop(coroutine)
         rows, columns = self.obstacles[obstacle].size()
-        self.obstacles[obstacle].destroyed()
+        self.obstacles[obstacle].destroy()
         self.obstacles.pop(obstacle)
         game_state.score += rows * columns
         game_state.shooted += 1
@@ -78,7 +78,7 @@ class Core:
         add_sound(self.sound_queue, Sounds.GAMEOVER)
         game_state.game_over = True
         game_state.save_history()
-        self.spaceship.destroyed()
+        self.spaceship.destroy()
         self.coroutines.append(show_game_over(canvas))
 
     def flip_coroutines(self, canvas, game_state: GameState):
@@ -129,7 +129,7 @@ class Core:
             if (space_pressed and not self.spaceship.destroyed
                     and game_state.year >= GUN_YEAR):
                 fire = Fire(canvas, *self.spaceship.get_gun_coords())
-                fire_coro = fire.aminate(canvas)
+                fire_coro = fire.animate(canvas)
                 self.coroutines.append(fire_coro)
                 self.fires[fire_coro] = fire
                 add_sound(self.sound_queue, Sounds.FIRE, game_state.game_over)

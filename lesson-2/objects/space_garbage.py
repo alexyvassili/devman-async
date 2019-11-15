@@ -21,13 +21,13 @@ class Garbage:
         self.row = 0
         self.frame = garbage_frame
         self.speed=GARBAGE_SPEED
-        self._destroy = False
+        self.destroyed = False
 
     def size(self) -> tuple:
         return get_frame_size(self.frame)
 
     def destroy(self) -> None:
-        self._destroy = True
+        self.destroyed = True
 
     async def fly(self, canvas) -> None:
         """Animate garbage, flying from top to bottom.
@@ -38,7 +38,7 @@ class Garbage:
             draw_frame(canvas, self.row, self.column, self.frame)
             await asyncio.sleep(0)
             draw_frame(canvas, self.row, self.column, self.frame, negative=True)
-            if self._destroy:
+            if self.destroyed:
                 rows, columns = self.size()
                 end_row, end_column = self.row + rows, self.column + columns
                 center_row = (self.row + end_row) // 2
