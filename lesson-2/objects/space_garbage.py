@@ -5,6 +5,7 @@
 import asyncio
 import os
 import random
+import math
 from typing import List, Iterable, Tuple
 from physics.explosion import explode
 from physics.curses_tools import draw_frame, get_frame_size
@@ -20,7 +21,8 @@ class Garbage:
         self.column = min(column, self.columns_number - 1)
         self.row = 0
         self.frame = garbage_frame
-        self.speed=GARBAGE_SPEED
+        x, y = get_frame_size(self.frame)
+        self.speed=GARBAGE_SPEED - math.sqrt(x * y) / 100
         self.destroyed = False
     
     @property
