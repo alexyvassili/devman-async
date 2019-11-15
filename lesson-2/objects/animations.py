@@ -6,7 +6,7 @@ import os
 import asyncio
 import curses
 from itertools import cycle
-from typing import List
+from typing import List, Tuple
 
 from physics.curses_tools import  draw_frame, is_frame_in_canvas, get_frame_size
 from physics.spaceship import update_speed
@@ -31,10 +31,11 @@ class SpaceShip:
     def destroy(self) -> None:
         self.destroyed = True
 
-    def size(self) -> tuple:
+    @property
+    def size(self) -> Tuple[int, int]:
         return get_frame_size(self.current_frame)
 
-    def get_gun_coords(self) -> tuple:
+    def get_gun_coords(self) -> Tuple[int, int]:
         """Get spaceship gun coords (up center)."""
         rows, columns = get_frame_size(self.current_frame)
         return self.row, self.column + columns // 2

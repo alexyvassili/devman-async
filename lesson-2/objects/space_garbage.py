@@ -5,7 +5,7 @@
 import asyncio
 import os
 import random
-from typing import List, Iterable
+from typing import List, Iterable, Tuple
 from physics.explosion import explode
 from physics.curses_tools import draw_frame, get_frame_size
 from settings import GARBAGE_SPEED
@@ -22,9 +22,15 @@ class Garbage:
         self.frame = garbage_frame
         self.speed=GARBAGE_SPEED
         self.destroyed = False
-
-    def size(self) -> tuple:
+    
+    @property
+    def size(self) -> Tuple[int, int]:
         return get_frame_size(self.frame)
+    
+    @property
+    def scores(self) -> int:
+        rows, columns = self.size
+        return rows * columns
 
     def destroy(self) -> None:
         self.destroyed = True
@@ -39,7 +45,7 @@ class Garbage:
             await asyncio.sleep(0)
             draw_frame(canvas, self.row, self.column, self.frame, negative=True)
             if self.destroyed:
-                rows, columns = self.size()
+                rows, columns = self.size
                 end_row, end_column = self.row + rows, self.column + columns
                 center_row = (self.row + end_row) // 2
                 center_columns = (self.column + end_column) // 2

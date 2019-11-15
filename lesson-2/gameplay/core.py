@@ -66,10 +66,9 @@ class Core:
             return
         self.fires[coroutine].destroy()
         self.fires.pop(coroutine)
-        rows, columns = self.obstacles[obstacle].size()
         self.obstacles[obstacle].destroy()
+        game_state.score += self.obstacles[obstacle].scores
         self.obstacles.pop(obstacle)
-        game_state.score += rows * columns
         game_state.shooted += 1
         add_sound(self.sound_queue, Sounds.BOOM, game_state.game_over)
 

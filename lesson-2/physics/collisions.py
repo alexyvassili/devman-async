@@ -47,7 +47,7 @@ def find_collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[
     fire_coords = fire.row, fire.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column
-        if has_collision(obstacle_corner, obstacle.size(), fire_coords):
+        if has_collision(obstacle_corner, obstacle.size, fire_coords):
             return obstacle_coro
     return None
 
@@ -57,7 +57,7 @@ def find_spaceship_collision(spaceship: SpaceShip, obstacles: Dict[Coroutine, Ga
     spaceship_coords = spaceship.row, spaceship.column
     for obstacle_coro, obstacle in obstacles.items():
         obstacle_corner = obstacle.row, obstacle.column
-        if has_collision(obstacle_corner, obstacle.size(),
-                         spaceship_coords, spaceship.size()):
+        if has_collision(obstacle_corner, obstacle.size,
+                         spaceship_coords, spaceship.size):
             return obstacle_coro
     return None
