@@ -13,7 +13,8 @@ Sound subsystem on Linux need alsa libraries.
 ### Linux
 1. Clone this repo
 2. It is recommended to create your own python virtual environment for the game
-3. Install pyalsaaudio: `pip install pyalsaaudio`
+3. Install pyalsaaudio: `pip install pyalsaaudio`  
+**NB:** pyalsaaudio package has only alsaaudio module: c bindings for alsa library. Thus, python functions from pyalsaaudio was included fully in this project. See original library on https://github.com/larsimmisch/pyalsaaudio
 4. Install libasound2-dev: `aptitude install libasound2-dev`
 
 ### Windows
