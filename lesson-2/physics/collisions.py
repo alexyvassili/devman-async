@@ -52,7 +52,7 @@ def find_collision(fire: Fire, obstacles: Dict[Coroutine, Garbage]) -> Optional[
     return None
 
 
-def is_game_over(spaceship: SpaceShip, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
+def find_spaceship_collision(spaceship: SpaceShip, obstacles: Dict[Coroutine, Garbage]) -> Optional[Coroutine]:
     """Game Over when we have collision of spaceship and garbage."""
     spaceship_coords = spaceship.row, spaceship.column
     for obstacle_coro, obstacle in obstacles.items():
