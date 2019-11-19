@@ -1,0 +1,12 @@
+version: '2.2'
+
+services:
+    backend.local:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /mnt/
+        volumes:
+            - /var/log/photoserver:/var/log/photoserver
+        ports:
+            - "8080:8080"
