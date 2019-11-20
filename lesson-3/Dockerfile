@@ -16,9 +16,9 @@ RUN apt-get install -y zip unzip
 
 COPY --from=builder /usr/share/python3/app /usr/share/python3/app
 
-COPY . /mnt
-COPY test_photos /mnt
-#COPY server.py /mnt/server.py
+COPY server.py /mnt/
+COPY html/ /mnt/html/
+COPY service /mnt/service
 
 ENV PATH="/usr/share/python3/app/bin:${PATH}"
 SHELL ["/bin/bash", "-c"]

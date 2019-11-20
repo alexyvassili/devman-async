@@ -9,7 +9,7 @@ async def get_from_server():
                                                     limit=1, )) as session:
         async with session.get("http://127.0.0.1:8080/archive/rur2/") as response:
             while True:
-                chunk = await response.content.read(2048)
+                chunk = await response.content.read(1048576)
                 if not chunk:
                     break
                 chunks.append(chunk)

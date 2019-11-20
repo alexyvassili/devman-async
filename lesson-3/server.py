@@ -1,47 +1,18 @@
-import logging
-import asyncio
+# We need patch aiohttp stream writer
+# before import web
+# because we get unhandled ConnectionResetError('Cannot write to closing transport')
+# while client broke the connection
+# See aiohttp issue: https://github.com/aio-libs/aiohttp/issues/3648
+from aiohttp import http_writer
+from service.http_writer_patch import patch_streamwriter
+patch_streamwriter(http_writer)
+
 from aiohttp import web
-import aiofiles
-import os
-from log import set_logs
-
-
-async def archivate(request):
-    hash_ = request.match_info.get('archive_hash')
-    folder = os.path.join('test_photos', hash_)
-    if not os.path.exists(folder):
-        return web.HTTPNotFound(body="<h1>404 Not Found</h1><p>Archive does not exist or was deleted.</p>",
-                                content_type="text/html")
-    response = web.StreamResponse()
-    response.headers['Content-Disposition'] = f'attachment; filename="photos_{hash_}.zip"'
-    response.headers['Content-Type'] = 'application/zip'
-    await response.prepare(request)
-    proc = await asyncio.create_subprocess_shell(
-        f'zip - {folder} -r -j',
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE)
-    count = 0
-    while True:
-        data = await proc.stdout.read(1024)
-        if not data:
-            break
-        logging.info(f"Sending archive chunk {len(data)} bytes...")
-        await response.write(data)
-        count += len(data)
-    return response
-
-
-async def handle_index_page(request):
-    async with aiofiles.open('index.html', mode='r') as index_file:
-        index_contents = await index_file.read()
-    return web.Response(text=index_contents, content_type='text/html')
+from service.log import set_logs
+from service.app import create_app
 
 
 if __name__ == '__main__':
     set_logs()
-    app = web.Application()
-    app.add_routes([
-        web.get('/', handle_index_page),
-        web.get('/archive/{archive_hash}/', archivate),
-    ])
+    app = create_app()
     web.run_app(app)
