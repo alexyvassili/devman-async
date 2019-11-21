@@ -15,16 +15,8 @@ async def get_from_server():
                 chunks.append(chunk)
                 count += len(chunk)
                 print("Get", len(chunk))
-                await asyncio.sleep(1)
     print('Chunks', len(chunks))
     print('Getted', count)
-
-    # end_time = loop.time() + 5.0
-    # while True:
-    #     print(datetime.datetime.now())
-    #     if (loop.time() + 1.0) >= end_time:
-    #         break
-    #     await asyncio.sleep(1)
 
 
 asyncio.run(get_from_server())

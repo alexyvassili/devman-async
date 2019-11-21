@@ -4,11 +4,12 @@ import asyncio
 from aiohttp import web
 import aiofiles
 import os
+from settings import config
 
 
 async def archivate(request):
     hash_ = request.match_info.get('archive_hash')
-    folder = os.path.join('test_photos', hash_)
+    folder = os.path.join(config.PHOTO_FOLDER, hash_)
     if not os.path.exists(folder):
         return web.HTTPNotFound(body="<h1>404 Not Found</h1><p>Archive does not exist or was deleted.</p>",
                                 content_type="text/html")
@@ -29,6 +30,8 @@ async def archivate(request):
             logging.info(f"Sending archive chunk {len(data)} bytes...")
             await response.write(data)
             count += len(data)
+            if config.ENABLE_DELAY:
+                await asyncio.sleep(1)
     except asyncio.CancelledError:
         logging.info(f"Download of {folder} was INTERRUPTED.")
         response.force_close()

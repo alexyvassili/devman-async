@@ -1,5 +1,6 @@
 import logging
 import os
+from settings import config
 
 
 LOG_DIR = '/var/log/photoserver'
@@ -44,5 +45,8 @@ def setup_loggers():
 
 
 def set_logs():
-    create_log_files_if_not_exist()
-    setup_loggers()
+    if config.LOGGING:
+        create_log_files_if_not_exist()
+        setup_loggers()
+    else:
+        logging.basicConfig(format=LOGGING_FORMAT, datefmt='%Y.%m.%d %H:%M:%S', level=logging.WARNING)
