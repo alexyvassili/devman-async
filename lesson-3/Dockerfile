@@ -16,7 +16,7 @@ RUN apt-get install -y zip unzip
 
 COPY --from=builder /usr/share/python3/app /usr/share/python3/app
 
-COPY server.py /mnt/
+COPY *.py /mnt/
 COPY html/ /mnt/html/
 COPY service /mnt/service
 
