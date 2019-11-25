@@ -36,6 +36,7 @@ async def archivate(request):
         logging.info(f"Download of {folder} was INTERRUPTED.")
         response.force_close()
         proc.kill()
+        raise asyncio.CancelledError
     return response
 
 
