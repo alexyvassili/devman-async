@@ -5,20 +5,21 @@ from asyncio import Queue
 
 
 def add_timestamp(log_line):
-    timestamp = datetime.strftime(datetime.now(), "[%d.%m.%y %H:%M]")
+    timestamp = datetime.strftime(datetime.now(), "[%d.%m.%y %H:%M:%S]")
     return f"{timestamp} {log_line}"
 
 
 async def chat_logging(chat_queue: Queue):
-    async with AIOFile("chatlog.txt", 'w') as afp:
-        writer = Writer(afp)
+    async with AIOFile("chatlog.txt", 'a') as afp:
+        offset = 0
         while True:
             log_line = await chat_queue.get()
             print(add_timestamp(log_line))
             if log_line is None:
                 break
-            # await writer(add_timestamp(log_line) + "\n")
-            await writer(add_timestamp("Hello мой ворлд\n"))
+            log_line_to_write = add_timestamp(log_line)
+            await afp.write(log_line_to_write, offset=offset)
+            await afp.fsync()
 
 
 async def tcp_echo_client(chat_queue):
