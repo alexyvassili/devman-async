@@ -1,7 +1,7 @@
 import asyncio
 import argparse
 from datetime import datetime
-from aiofile import AIOFile, Writer
+from aiofile import AIOFile
 from asyncio import Queue
 from config import config
 
