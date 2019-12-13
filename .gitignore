@@ -105,3 +105,4 @@ venv.bak/
 
 .idea/
 .directory
+*log.txt
