@@ -1,7 +1,25 @@
 import asyncio
+import argparse
 from datetime import datetime
 from aiofile import AIOFile, Writer
 from asyncio import Queue
+from config import config
+
+
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--host', default=config.HOST, action='store', help='Chat server host')
+    parser.add_argument('-p', '--port', default=config.PORT, action='store', help='Chat server port')
+    parser.add_argument('-i', '--history', default=config.HISTORY, action='store', help='History filename')
+    return parser
+
+
+def update_config_from_args():
+    parser = create_parser()
+    namespace = parser.parse_args()
+    config.HOST = namespace.host
+    config.PORT = namespace.port
+    config.HISTORY = namespace.history
 
 
 def add_timestamp(log_line):
@@ -10,26 +28,26 @@ def add_timestamp(log_line):
 
 
 async def chat_logging(chat_queue: Queue):
-    async with AIOFile("chatlog.txt", 'a') as afp:
+    async with AIOFile(config.HISTORY, 'a') as afp:
         offset = 0
         while True:
             log_line = await chat_queue.get()
-            print(add_timestamp(log_line))
             if log_line is None:
                 break
             log_line_to_write = add_timestamp(log_line)
+            print(log_line_to_write)
             await afp.write(log_line_to_write, offset=offset)
             await afp.fsync()
 
 
 async def tcp_echo_client(chat_queue):
-    reader, writer = await asyncio.open_connection('minechat.dvmn.org', 5000)
+    reader, writer = await asyncio.open_connection(config.HOST, config.PORT)
     retry_timeout = 0
 
     while True:
         try:
-            data = await reader.readline()
-        except (ConnectionRefusedError, ConnectionResetError, ConnectionError) as e:
+            data = await asyncio.wait_for(reader.readline(), timeout=3.0)
+        except (ConnectionRefusedError, ConnectionResetError, ConnectionError, asyncio.TimeoutError) as e:
             if retry_timeout:
                 await chat_queue.put("Нет соединения. Повторная попытка через 3 сек.\n")
             else:
@@ -55,4 +73,7 @@ async def main():
     chat_queue = Queue()
     await asyncio.gather(tcp_echo_client(chat_queue), chat_logging(chat_queue))
 
-asyncio.run(main())
+
+if __name__ == "__main__":
+    update_config_from_args()
+    asyncio.run(main())
