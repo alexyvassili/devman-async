@@ -101,6 +101,23 @@ async def read_response(reader):
         return data
 
 
+async def send_message(reader, writer, message):
+    logging.debug("Sending message: %s", message)
+    # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения или ника
+    writer.write(f"{message}\n\n".encode())
+    data = await read_response(reader)
+    logging.debug(data.decode())
+
+
+async def send_many_messages(reader, writer):
+    while True:
+        try:
+            message = input()
+        except KeyboardInterrupt:
+            break
+        await send_message(reader, writer, message)
+
+
 async def tcp_echo_client():
     reader, writer = await asyncio.open_connection(args.server, args.write_port)
     await login(reader, writer)
@@ -108,16 +125,12 @@ async def tcp_echo_client():
     data = await read_response(reader)
     logging.debug(data.decode())
 
-    while True:
-        try:
-            message = input()
-        except KeyboardInterrupt:
-            break
-        logging.debug("Sending message: %s", message)
-        # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения или ника
-        writer.write(f"{message}\n\n".encode())
-        data = await read_response(reader)
-        logging.debug(data.decode())
+    if args.message:
+        # Send message and exit
+        await send_message(reader, writer, args.message)
+    else:
+        await send_many_messages(reader, writer)
+
     logging.debug('Close the connection')
     writer.close()
 

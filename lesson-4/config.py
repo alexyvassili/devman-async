@@ -20,8 +20,9 @@ def get_config():
     parser.add_argument("-p", "--read-port", type=int, default=5000, help="Read port")
     parser.add_argument("-w", "--write-port", type=int, default=5050, help="Write port")
     parser.add_argument("-c", "--chatlog", type=str, default="chatlog.txt", help="Chat log file")
-    parser.add_argument("-u", "--user", type=str, help="User name")
-    parser.add_argument("-t", "--token", type=str, help="User token")
+    parser.add_argument("-u", "--user", type=str, help="Send message: User name")
+    parser.add_argument("-t", "--token", type=str, help="Send message: User token")
+    parser.add_argument("-m", "--message", type=str, help="Send message and exit")
 
     args = parser.parse_args()
     return args
