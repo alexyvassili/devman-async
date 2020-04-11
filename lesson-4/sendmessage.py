@@ -114,7 +114,7 @@ async def tcp_echo_client():
         except KeyboardInterrupt:
             break
         logging.debug("Sending message: %s", message)
-        # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения
+        # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения или ника
         writer.write(f"{message}\n\n".encode())
         data = await read_response(reader)
         logging.debug(data.decode())
