@@ -87,7 +87,7 @@ async def read_response(reader):
             data = await asyncio.wait_for(reader.readline(), timeout=3.0)
         except (ConnectionRefusedError, ConnectionResetError, ConnectionError, asyncio.TimeoutError) as e:
             if retry_timeout:
-                logging.debug("Нет соединения. Повторная попытка через 3 сек.\n")
+                logging.debug("Нет соединения. Повторная попытка через %s сек.\n", retry_timeout)
             else:
                 logging.debug("Нет соединения. Повторная попытка.\n")
             await asyncio.sleep(retry_timeout)
