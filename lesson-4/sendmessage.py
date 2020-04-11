@@ -2,8 +2,10 @@ import asyncio
 import logging
 import os
 import json
-from config import config
+from config import get_config
 
+
+args = get_config()
 
 ACCESS_LOG_FILE = 'sendmessage.log'
 LOGGING_FORMAT = '[%(asctime)s] %(levelname).1s %(message)s'
@@ -33,7 +35,15 @@ create_log_files_if_not_exist()
 setup_loggers()
 
 
-TOKEN = "405b8f4e-2bd8-11ea-b989-0242ac110002"
+def get_token():
+    users = {
+        "test": "405b8f4e-2bd8-11ea-b989-0242ac110002"
+    }
+    if args.token:
+        return args.token
+    if args.user and args.user in users:
+        return users[args.user]
+    return None
 
 
 async def sign_up(reader, writer):
@@ -46,11 +56,11 @@ async def sign_up(reader, writer):
     # account data
     data = await read_response(reader)
     account = json.loads(data.decode())
-    print(account, "!!!")
     return account
 
 
-async def login(reader, writer, token=None):
+async def login(reader, writer):
+    token = get_token()
     data = await read_response(reader)
     # Enter your personal hash or leave it empty...
     logging.debug(data.decode())
@@ -92,8 +102,8 @@ async def read_response(reader):
 
 
 async def tcp_echo_client():
-    reader, writer = await asyncio.open_connection(config.HOST, config.WRITE_PORT)
-    await login(reader, writer, token=TOKEN)
+    reader, writer = await asyncio.open_connection(args.server, args.write_port)
+    await login(reader, writer)
     logging.debug("Start send message. Press Ctrl-C to quit")
     data = await read_response(reader)
     logging.debug(data.decode())
@@ -104,6 +114,7 @@ async def tcp_echo_client():
         except KeyboardInterrupt:
             break
         logging.debug("Sending message: %s", message)
+        # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения
         writer.write(f"{message}\n\n".encode())
         data = await read_response(reader)
         logging.debug(data.decode())

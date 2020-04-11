@@ -3,23 +3,10 @@ import argparse
 from datetime import datetime
 from aiofile import AIOFile
 from asyncio import Queue
-from config import config
+from config import get_config
 
 
-def create_parser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--host', default=config.HOST, action='store', help='Chat server host')
-    parser.add_argument('-p', '--port', default=config.PORT, action='store', help='Chat server port')
-    parser.add_argument('-i', '--history', default=config.HISTORY, action='store', help='History filename')
-    return parser
-
-
-def update_config_from_args():
-    parser = create_parser()
-    namespace = parser.parse_args()
-    config.HOST = namespace.host
-    config.PORT = namespace.port
-    config.HISTORY = namespace.history
+args = get_config()
 
 
 def add_timestamp(log_line):
@@ -28,7 +15,7 @@ def add_timestamp(log_line):
 
 
 async def chat_logging(chat_queue: Queue):
-    async with AIOFile(config.HISTORY, 'a') as afp:
+    async with AIOFile(args.chatlog, 'a') as afp:
         offset = 0
         while True:
             log_line = await chat_queue.get()
@@ -41,7 +28,7 @@ async def chat_logging(chat_queue: Queue):
 
 
 async def tcp_echo_client(chat_queue):
-    reader, writer = await asyncio.open_connection(config.HOST, config.PORT)
+    reader, writer = await asyncio.open_connection(args.server, args.read_port)
     retry_timeout = 0
 
     while True:
@@ -75,5 +62,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    update_config_from_args()
     asyncio.run(main())
