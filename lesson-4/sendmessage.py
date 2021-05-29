@@ -31,6 +31,7 @@ async def sign_up(reader, writer):
     nickname = input()
     log.debug("Nickname: %s", nickname)
     writer.write(f"{nickname}\n".encode())
+    await writer.drain()
     # account data
     data = await read_response(reader)
     account = json.loads(data.decode())
@@ -55,6 +56,7 @@ async def login(reader, writer):
     else:
         writer.write(b"\n")
         account = await sign_up(reader, writer)
+    await writer.drain()
     log.debug("Logged in as: %s", account["nickname"])
 
 
@@ -83,6 +85,7 @@ async def send_message(reader, writer, message):
     log.debug("Sending message: %s", message)
     # NB:  мне не удалось сломать скрипт, передавая \n в середине сообщения или ника
     writer.write(f"{message}\n\n".encode())
+    await writer.drain()
     data = await read_response(reader)
     log.debug(data.decode())
 
