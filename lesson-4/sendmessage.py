@@ -99,7 +99,7 @@ async def send_many_messages(reader, writer):
         await send_message(reader, writer, message)
 
 
-async def tcp_echo_client():
+async def chat_writer_client():
     reader, writer = await asyncio.open_connection(args.server, args.write_port)
     await login(reader, writer)
     log.debug("Start send message. Press Ctrl-C to quit")
@@ -131,4 +131,4 @@ if __name__ == '__main__':
     log.addHandler(consoleHandler)
 
     log.setLevel(logging.DEBUG)
-    asyncio.run(tcp_echo_client())
+    asyncio.run(chat_writer_client())
