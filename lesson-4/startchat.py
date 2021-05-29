@@ -23,7 +23,7 @@ async def chat_logging(chat_queue: Queue, chat_logfile: str):
             await afp.fsync()
 
 
-async def chat_reader_client(chat_queue):
+async def read_chat(chat_queue):
     reader, writer = await asyncio.open_connection(args.server, args.read_port)
     retry_timeout = 0
 
@@ -55,7 +55,7 @@ async def chat_reader_client(chat_queue):
 async def main(chat_logfile: str):
     chat_queue = Queue()
     await asyncio.gather(
-        chat_reader_client(chat_queue),
+        read_chat(chat_queue),
         chat_logging(chat_queue, chat_logfile)
     )
 
