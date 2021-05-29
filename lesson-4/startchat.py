@@ -1,12 +1,8 @@
 import asyncio
-import argparse
 from datetime import datetime
 from aiofile import AIOFile
 from asyncio import Queue
 from config import get_config
-
-
-args = get_config()
 
 
 def add_timestamp(log_line):
@@ -14,8 +10,8 @@ def add_timestamp(log_line):
     return f"{timestamp} {log_line}"
 
 
-async def chat_logging(chat_queue: Queue):
-    async with AIOFile(args.chatlog, 'a') as afp:
+async def chat_logging(chat_queue: Queue, chat_logfile: str):
+    async with AIOFile(chat_logfile, 'a') as afp:
         offset = 0
         while True:
             log_line = await chat_queue.get()
@@ -56,10 +52,14 @@ async def chat_reader_client(chat_queue):
     writer.close()
 
 
-async def main():
+async def main(chat_logfile: str):
     chat_queue = Queue()
-    await asyncio.gather(chat_reader_client(chat_queue), chat_logging(chat_queue))
+    await asyncio.gather(
+        chat_reader_client(chat_queue),
+        chat_logging(chat_queue, chat_logfile)
+    )
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    args = get_config()
+    asyncio.run(main(args.chatlog))

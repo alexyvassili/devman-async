@@ -5,22 +5,20 @@ import json
 from config import get_config
 
 
-args = get_config()
-
 ACCESS_LOG_FILE = 'sendmessage.log'
 LOGGING_FORMAT = '[%(asctime)s] %(levelname).1s %(message)s'
 
 log = logging.getLogger('send_message')
 
 
-def get_token():
+def get_token(user, token):
     users = {
         "test": "405b8f4e-2bd8-11ea-b989-0242ac110002"
     }
-    if args.token:
-        return args.token
-    if args.user and args.user in users:
-        return users[args.user]
+    if token:
+        return token
+    if user and user in users:
+        return users[user]
     return None
 
 
@@ -38,8 +36,8 @@ async def sign_up(reader, writer):
     return account
 
 
-async def login(reader, writer):
-    token = get_token()
+async def login(reader, writer, user, token):
+    token = get_token(user, token)
     data = await read_response(reader)
     # Enter your personal hash or leave it empty...
     log.debug(data.decode())
@@ -99,9 +97,9 @@ async def send_many_messages(reader, writer):
         await send_message(reader, writer, message)
 
 
-async def chat_writer_client():
+async def chat_writer_client(args):
     reader, writer = await asyncio.open_connection(args.server, args.write_port)
-    await login(reader, writer)
+    await login(reader, writer, args.user, args.token)
     log.debug("Start send message. Press Ctrl-C to quit")
     data = await read_response(reader)
     log.debug(data.decode())
@@ -131,4 +129,5 @@ if __name__ == '__main__':
     log.addHandler(consoleHandler)
 
     log.setLevel(logging.DEBUG)
-    asyncio.run(chat_writer_client())
+    args = get_config()
+    asyncio.run(chat_writer_client(args))
