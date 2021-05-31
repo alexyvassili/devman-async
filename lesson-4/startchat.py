@@ -24,8 +24,7 @@ async def chat_logging(chat_queue: Queue, chat_logfile: str):
             await afp.fsync()
 
 
-async def read_chat(chat_queue):
-    reader, writer = await asyncio.open_connection(args.server, args.read_port)
+async def read_chat(chat_queue, reader):
     retry_timeout = 0
 
     while True:
@@ -50,16 +49,19 @@ async def read_chat(chat_queue):
         await chat_queue.put(data.decode())
 
     await chat_queue.put('Закрытие соединения.\n')
-    writer.close()
 
 
-async def main(chat_logfile: str):
+async def main(args):
     chat_queue = Queue()
-    async with anyio.create_task_group() as tg:
-        tg.start_soon(read_chat, chat_queue)
-        tg.start_soon(chat_logging, chat_queue, chat_logfile)
+    reader, writer = await asyncio.open_connection(args.server, args.read_port)
+    try:
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(read_chat, chat_queue, reader)
+            tg.start_soon(chat_logging, chat_queue, args.chatlog)
+    finally:
+        writer.close()
 
 
 if __name__ == "__main__":
     args = get_config()
-    asyncio.run(main(args.chatlog))
+    asyncio.run(main(args))

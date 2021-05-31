@@ -99,19 +99,21 @@ async def send_many_messages(reader, writer):
 
 async def write_to_chat(args):
     reader, writer = await asyncio.open_connection(args.server, args.write_port)
-    await login(reader, writer, args.user, args.token)
-    log.debug("Start send message. Press Ctrl-C to quit")
-    data = await read_response(reader)
-    log.debug(data.decode())
+    try:
+        await login(reader, writer, args.user, args.token)
+        log.debug("Start send message. Press Ctrl-C to quit")
+        data = await read_response(reader)
+        log.debug(data.decode())
 
-    if args.message:
-        # Send message and exit
-        await send_message(reader, writer, args.message)
-    else:
-        await send_many_messages(reader, writer)
+        if args.message:
+            # Send message and exit
+            await send_message(reader, writer, args.message)
+        else:
+            await send_many_messages(reader, writer)
 
-    log.debug('Close the connection')
-    writer.close()
+    finally:
+        log.debug('Close the connection')
+        writer.close()
 
 
 if __name__ == '__main__':
