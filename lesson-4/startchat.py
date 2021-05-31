@@ -1,3 +1,4 @@
+import anyio
 import asyncio
 from datetime import datetime
 from aiofile import AIOFile
@@ -30,7 +31,7 @@ async def read_chat(chat_queue):
     while True:
         try:
             data = await asyncio.wait_for(reader.readline(), timeout=3.0)
-        except (ConnectionRefusedError, ConnectionResetError, ConnectionError, asyncio.TimeoutError) as e:
+        except (ConnectionRefusedError, ConnectionResetError, ConnectionError, asyncio.TimeoutError):
             if retry_timeout:
                 await chat_queue.put("Нет соединения. Повторная попытка через 3 сек.\n")
             else:
@@ -54,10 +55,9 @@ async def read_chat(chat_queue):
 
 async def main(chat_logfile: str):
     chat_queue = Queue()
-    await asyncio.gather(
-        read_chat(chat_queue),
-        chat_logging(chat_queue, chat_logfile)
-    )
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(read_chat, chat_queue)
+        tg.start_soon(chat_logging, chat_queue, chat_logfile)
 
 
 if __name__ == "__main__":
